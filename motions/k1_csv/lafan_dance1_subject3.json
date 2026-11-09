@@ -1,0 +1,204 @@
+{
+  "source": "/u/alauinger/Dancing-Robot/motions/gmr_pkl/lafan_dance1_subject3.pkl",
+  "fps": 30.0,
+  "frames": 3945,
+  "duration_s": 131.5,
+  "root_height_min_m": 0.454,
+  "root_height_max_m": 0.644,
+  "verdict": "OK",
+  "reasons": [],
+  "frames_with_any_clipping_pct": 36.27,
+  "frames_with_leg_clipping_pct": 3.4,
+  "clipped_joints": {
+    "aahead_pitch_joint": {
+      "group": "head",
+      "frames_clipped_pct": 11.03,
+      "worst_violation_rad": 0.061
+    },
+    "left_shoulder_pitch_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 1.77,
+      "worst_violation_rad": 0.125
+    },
+    "left_shoulder_roll_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 5.68,
+      "worst_violation_rad": 0.098
+    },
+    "left_elbow_pitch_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 2.66,
+      "worst_violation_rad": 0.385
+    },
+    "left_elbow_yaw_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 4.21,
+      "worst_violation_rad": 0.198
+    },
+    "right_shoulder_pitch_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 2.46,
+      "worst_violation_rad": 0.38
+    },
+    "right_shoulder_roll_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 3.17,
+      "worst_violation_rad": 0.111
+    },
+    "right_elbow_pitch_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 7.2,
+      "worst_violation_rad": 0.385
+    },
+    "right_elbow_yaw_joint": {
+      "group": "arms",
+      "frames_clipped_pct": 7.76,
+      "worst_violation_rad": 0.198
+    },
+    "left_hip_roll_joint": {
+      "group": "legs",
+      "frames_clipped_pct": 2.08,
+      "worst_violation_rad": 0.025
+    },
+    "right_hip_roll_joint": {
+      "group": "legs",
+      "frames_clipped_pct": 1.32,
+      "worst_violation_rad": 0.025
+    }
+  },
+  "joint_speeds": {
+    "aahead_yaw_joint": {
+      "p99_rad_s": 6.04,
+      "max_rad_s": 16.88,
+      "frames_over_motor_limit": 8,
+      "frames_over_full_torque_pct": 0.2
+    },
+    "aahead_pitch_joint": {
+      "p99_rad_s": 3.88,
+      "max_rad_s": 8.16,
+      "frames_over_motor_limit": 1,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_shoulder_pitch_joint": {
+      "p99_rad_s": 9.87,
+      "max_rad_s": 23.69,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 5.5
+    },
+    "left_shoulder_roll_joint": {
+      "p99_rad_s": 7.55,
+      "max_rad_s": 23.78,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 3.8
+    },
+    "left_elbow_pitch_joint": {
+      "p99_rad_s": 12.04,
+      "max_rad_s": 23.57,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 8.6
+    },
+    "left_elbow_yaw_joint": {
+      "p99_rad_s": 7.19,
+      "max_rad_s": 14.71,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 2.3
+    },
+    "right_shoulder_pitch_joint": {
+      "p99_rad_s": 13.99,
+      "max_rad_s": 25.18,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 6.6
+    },
+    "right_shoulder_roll_joint": {
+      "p99_rad_s": 7.48,
+      "max_rad_s": 23.25,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 4.8
+    },
+    "right_elbow_pitch_joint": {
+      "p99_rad_s": 14.11,
+      "max_rad_s": 27.47,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 7.9
+    },
+    "right_elbow_yaw_joint": {
+      "p99_rad_s": 7.22,
+      "max_rad_s": 13.66,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 2.9
+    },
+    "left_hip_pitch_joint": {
+      "p99_rad_s": 4.62,
+      "max_rad_s": 8.16,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 19.5
+    },
+    "left_hip_roll_joint": {
+      "p99_rad_s": 3.88,
+      "max_rad_s": 6.63,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_hip_yaw_joint": {
+      "p99_rad_s": 4.74,
+      "max_rad_s": 13.69,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.1
+    },
+    "left_knee_pitch_joint": {
+      "p99_rad_s": 10.0,
+      "max_rad_s": 12.95,
+      "frames_over_motor_limit": 4,
+      "frames_over_full_torque_pct": 28.0
+    },
+    "left_ankle_pitch_joint": {
+      "p99_rad_s": 5.27,
+      "max_rad_s": 8.85,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_ankle_roll_joint": {
+      "p99_rad_s": 5.41,
+      "max_rad_s": 9.43,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.1
+    },
+    "right_hip_pitch_joint": {
+      "p99_rad_s": 3.83,
+      "max_rad_s": 6.47,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 16.6
+    },
+    "right_hip_roll_joint": {
+      "p99_rad_s": 4.46,
+      "max_rad_s": 9.16,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_hip_yaw_joint": {
+      "p99_rad_s": 4.82,
+      "max_rad_s": 10.44,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.1
+    },
+    "right_knee_pitch_joint": {
+      "p99_rad_s": 9.45,
+      "max_rad_s": 13.32,
+      "frames_over_motor_limit": 2,
+      "frames_over_full_torque_pct": 27.4
+    },
+    "right_ankle_pitch_joint": {
+      "p99_rad_s": 5.45,
+      "max_rad_s": 10.66,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.2
+    },
+    "right_ankle_roll_joint": {
+      "p99_rad_s": 4.66,
+      "max_rad_s": 7.65,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    }
+  },
+  "max_trunk_tilt_deg": 38.1
+}
