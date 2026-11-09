@@ -2,9 +2,10 @@
 third_party/*
 !third_party/README.md
 
-# Raw mocap downloads
+# Raw mocap downloads and intermediate GMR output
 motions/raw/*
 !motions/raw/.gitkeep
+motions/gmr_pkl/
 
 # Training output
 logs/
