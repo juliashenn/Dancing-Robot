@@ -39,3 +39,6 @@ Thumbs.db
 # Copy clips we actually use into motions/k1_csv/selected/ to version them.
 motions/k1_csv/g*_c*.csv
 motions/k1_csv/g*_c*.json
+
+# Rendered videos and their summaries (large; regenerate with deploy/record_mujoco.py)
+videos/
