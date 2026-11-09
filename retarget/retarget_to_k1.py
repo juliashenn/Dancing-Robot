@@ -16,7 +16,6 @@ Supported inputs:
 import argparse
 import pickle
 import sys
-import tempfile
 import time
 from pathlib import Path
 
@@ -75,14 +74,15 @@ def ground_offset(model, qpos_all):
 
 
 def retarget_clip(src, pkl_out, tgt_fps):
-    with tempfile.TemporaryDirectory() as tmp:
-        if src.suffix == ".pkl":
-            npz = Path(tmp) / f"{src.stem}.npz"
-            aistpp_to_amass_npz(src, npz)
-        else:
-            npz = src
-        smplx_data, body_model, smplx_output, human_height = load_smplx_file(str(npz), str(BODY_MODELS))
-        frames, fps = get_smplx_data_offline_fast(smplx_data, body_model, smplx_output, tgt_fps=tgt_fps)
+    if src.suffix == ".pkl":
+        # Converted copy is kept (not a temp file): GMR holds the .npz open, which blocks deletion on Windows.
+        npz = pkl_out.parent / "_smplx" / f"{src.stem}.npz"
+        npz.parent.mkdir(parents=True, exist_ok=True)
+        aistpp_to_amass_npz(src, npz)
+    else:
+        npz = src
+    smplx_data, body_model, smplx_output, human_height = load_smplx_file(str(npz), str(BODY_MODELS))
+    frames, fps = get_smplx_data_offline_fast(smplx_data, body_model, smplx_output, tgt_fps=tgt_fps)
 
     retargeter = GMR(src_human="smplx", tgt_robot="booster_k1", actual_human_height=human_height, verbose=False)
     qpos_all = np.array([retargeter.retarget(f).copy() for f in frames])

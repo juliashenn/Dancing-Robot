@@ -6,6 +6,8 @@ third_party/*
 motions/raw/*
 !motions/raw/.gitkeep
 motions/gmr_pkl/
+motions/raw/aistpp_download/
+motions/*.log
 
 # Training output
 logs/
@@ -32,3 +34,8 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+
+# Bulk AIST++ retargeting output (47 MB, reproducible with retarget/retarget_to_k1.py).
+# Copy clips we actually use into motions/k1_csv/selected/ to version them.
+motions/k1_csv/g*_c*.csv
+motions/k1_csv/g*_c*.json

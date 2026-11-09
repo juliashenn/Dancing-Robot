@@ -1,0 +1,11 @@
+genre,clips,ok,ok_pct,ok_minutes,median_clip_pct,median_worst_rad,median_max_speed_rad_s
+House,42,15,36,1.9,14.3,0.11,13.4
+Street Jazz,42,14,33,2.2,28.2,0.32,7.4
+Lock,43,14,33,2.1,20.5,0.13,27.6
+Pop,43,14,33,2.4,16.9,0.11,11.9
+Ballet Jazz,41,5,12,0.9,54.8,0.39,38.3
+Krump,41,4,10,0.6,44.4,0.39,23.9
+LA Hip-hop,43,2,5,0.3,30.0,0.11,33.2
+Break,37,0,0,0.0,58.4,0.39,45.6
+Middle Hip-hop,43,0,0,0.0,50.4,0.39,39.8
+Waack,36,0,0,0.0,70.1,0.39,46.0
