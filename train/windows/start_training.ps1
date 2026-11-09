@@ -1,7 +1,9 @@
 # Start a booster_train run on the desktop as a Windows scheduled task, with a watchdog that
 # resumes from the newest checkpoint if training dies before reaching -MaxIterations.
 #
-#   powershell -File C:\isaac\start_training.ps1 -Task Booster-K1-MJ_Dance_002-v0 -RunName mj2_full
+#   powershell -File C:\isaac\start_training.ps1 -Task K1-Dance-Pop1-v0 -RunName pop1
+#   powershell -File C:\isaac\start_training.ps1 -Task Booster-K1-MJ_Dance_002-v0 -RunName mj2_full `
+#       -Script "third_party\booster_train\scripts\rsl_rl\train.py"
 #   powershell -File C:\isaac\start_training.ps1 -Task <task> -RunName <name> -MaxIterations 8000
 #   powershell -File C:\isaac\stop_training.ps1 -RunName <name>      (stop on purpose; no auto-restart)
 #
@@ -22,6 +24,8 @@ param(
     [int]$SaveInterval = 250,
     [int]$MaxRestarts = 5,
     [string]$ExtraArgs = "",
+    # Our tasks (K1-Dance-*) need the wrapper; Booster's own tasks can use booster_train's script directly.
+    [string]$Script = "train\run_rsl_rl.py train",
     [switch]$Worker   # internal: set when the scheduled task runs this script
 )
 $Log = "C:\isaac\logs\train_$RunName.log"                 # training output
@@ -36,7 +40,7 @@ if (-not $Worker) {
     Remove-Item $StopFlag -ErrorAction SilentlyContinue
     $argList = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\isaac\start_training.ps1 " +
                "-Task $Task -RunName $RunName -NumEnvs $NumEnvs -MaxIterations $MaxIterations " +
-               "-SaveInterval $SaveInterval -MaxRestarts $MaxRestarts -Worker"
+               "-SaveInterval $SaveInterval -MaxRestarts $MaxRestarts -Script `"$Script`" -Worker"
     if ($ExtraArgs) { $argList += " -ExtraArgs `"$ExtraArgs`"" }
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argList
     $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive
@@ -83,7 +87,7 @@ for ($attempt = 0; $attempt -le $MaxRestarts; $attempt++) {
         $resumeArgs = "--max_iterations $MaxIterations"
         Write-Log "attempt $attempt`: starting fresh"
     }
-    $cmd = "python third_party\booster_train\scripts\rsl_rl\train.py --task $Task --headless --num_envs $NumEnvs " +
+    $cmd = "python $Script --task $Task --headless --num_envs $NumEnvs " +
            "--run_name $RunName $resumeArgs $ExtraArgs agent.save_interval=$SaveInterval >> `"$Log`" 2>&1"
     $proc = Start-Process cmd.exe -ArgumentList "/c $cmd" -WindowStyle Hidden -PassThru
 
