@@ -1,0 +1,33 @@
+# External repos (fetched by setup/clone_third_party.py)
+third_party/*
+!third_party/README.md
+
+# Raw mocap downloads
+motions/raw/*
+!motions/raw/.gitkeep
+
+# Training output
+logs/
+outputs/
+wandb/
+*.pt
+*.onnx
+!deploy/**/models/*.pt
+!deploy/**/models/*.onnx
+
+# Media
+*.mp4
+*.webm
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
