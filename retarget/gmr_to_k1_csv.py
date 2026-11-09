@@ -41,6 +41,34 @@ K1_JOINT_NAMES = [
 ROOT_COLUMNS = ["root_pos_x", "root_pos_y", "root_pos_z",
                 "root_quat_x", "root_quat_y", "root_quat_z", "root_quat_w"]
 
+# Motor speed limits (rad/s) from booster_train assets/robots/actuator.py + booster_k1.py:
+# (velocity_limit: torque drops to zero, knee_point_velocity: full torque up to here).
+MOTOR_SPEED = {
+    "hip_pitch": (14.66, 1.88),   # E6408
+    "hip_roll": (12.15, 8.38),    # E4315
+    "hip_yaw": (17.59, 7.85),     # E4310
+    "knee": (12.57, 2.09),        # E6416
+    "ankle": (17.59, 7.85),       # E4310 (parallel linkage, ratio 1.0)
+    "shoulder": (33.51, 5.24),    # R14
+    "elbow": (33.51, 5.24),       # R14
+    "head": (7.85, 7.85),         # HT4438
+}
+
+
+SMALL_CLIP_RAD = 0.05  # ~3 deg: clipping smaller than this is ignored by the frequency rule
+
+
+def joint_group(name):
+    if "head" in name:
+        return "head"
+    if any(s in name for s in ("hip", "knee", "ankle")):
+        return "legs"
+    return "arms"
+
+
+def speed_limit(name):
+    return next(v for k, v in MOTOR_SPEED.items() if k in name)
+
 
 def load_joint_limits(xml_path):
     """Return (lower, upper) arrays in K1_JOINT_NAMES order from a MuJoCo XML."""
@@ -74,28 +102,59 @@ def load_gmr_pkl(path):
 
 
 def clip_report(dof_pos, lower, upper, fps, clip_frac_warn, clip_rad_warn):
+    """Clip to joint limits and judge feasibility.
+
+    Verdict rules (what matters for balance):
+      * legs (hip/knee/ankle): REVIEW if clipped by more than SMALL_CLIP_RAD in > clip_frac_warn of frames,
+        or by > clip_rad_warn rad in any frame,
+        or if the 99th-percentile speed exceeds the motor's hard speed limit;
+      * arms: clipping is reported but doesn't fail the clip (a less-bent elbow looks nearly the same);
+        REVIEW only if the 99th-percentile speed exceeds the motor's hard limit;
+      * head: reported only.
+    Speeds use the 99th percentile over frames, so single-frame retargeting glitches don't dominate;
+    glitch frames (speed above the hard limit) are counted separately.
+    """
     below = np.clip(lower - dof_pos, 0.0, None)
     above = np.clip(dof_pos - upper, 0.0, None)
     violation = np.maximum(below, above)            # rad outside the limit, 0 if inside
     clipped = violation > 1e-9
     clipped_dof = np.clip(dof_pos, lower, upper)
-    vel = np.abs(np.diff(clipped_dof, axis=0)) * fps if len(dof_pos) > 1 else np.zeros_like(dof_pos)
+    if len(dof_pos) > 2:
+        vel = np.abs(np.gradient(clipped_dof, 1.0 / fps, axis=0))
+    else:
+        vel = np.zeros_like(dof_pos)
 
-    joints = {}
+    joints, speeds, reasons = {}, {}, []
     for j, name in enumerate(K1_JOINT_NAMES):
+        group = joint_group(name)
+        hard, full_torque = speed_limit(name)
+        p99 = float(np.percentile(vel[:, j], 99))
+        over_hard = int((vel[:, j] > hard).sum())
+        speeds[name] = {"p99_rad_s": round(p99, 2), "max_rad_s": round(float(vel[:, j].max()), 2),
+                        "frames_over_motor_limit": over_hard,
+                        "frames_over_full_torque_pct": round(100.0 * float((vel[:, j] > full_torque).mean()), 1)}
         if clipped[:, j].any():
             joints[name] = {
+                "group": group,
                 "frames_clipped_pct": round(100.0 * clipped[:, j].mean(), 2),
                 "worst_violation_rad": round(float(violation[:, j].max()), 3),
             }
-    worst_frac = max((v["frames_clipped_pct"] for v in joints.values()), default=0.0) / 100.0
-    worst_rad = max((v["worst_violation_rad"] for v in joints.values()), default=0.0)
-    verdict = "OK" if worst_frac <= clip_frac_warn and worst_rad <= clip_rad_warn else "REVIEW"
+            # Violations under SMALL_CLIP_RAD (e.g. the 1.4 deg gap between GMR's and Booster's hip-roll
+            # limits) don't count toward the frequency rule.
+            significant = (violation[:, j] > SMALL_CLIP_RAD).mean()
+            if group == "legs" and (significant > clip_frac_warn or violation[:, j].max() > clip_rad_warn):
+                reasons.append(f"{name} clipped ({joints[name]['frames_clipped_pct']}% of frames, "
+                               f"worst {joints[name]['worst_violation_rad']} rad)")
+        if group != "head" and p99 > hard:
+            reasons.append(f"{name} too fast (p99 {p99:.1f} rad/s > motor limit {hard})")
+
     report = {
-        "verdict": verdict,
+        "verdict": "OK" if not reasons else "REVIEW",
+        "reasons": reasons,
         "frames_with_any_clipping_pct": round(100.0 * clipped.any(axis=1).mean(), 2),
+        "frames_with_leg_clipping_pct": round(100.0 * clipped[:, [joint_group(n) == "legs" for n in K1_JOINT_NAMES]].any(axis=1).mean(), 2),
         "clipped_joints": joints,
-        "max_joint_speed_rad_s": {n: round(float(v), 2) for n, v in zip(K1_JOINT_NAMES, vel.max(axis=0))} if len(vel) else {},
+        "joint_speeds": speeds,
     }
     return clipped_dof, report
 
@@ -109,6 +168,16 @@ def convert(pkl_path, out_dir, lower, upper, args):
 
     clipped_dof, report = clip_report(dof_pos, lower, upper, fps, args.clip_frac_warn, args.clip_rad_warn)
     motion = np.hstack([root_pos, root_rot, clipped_dof])
+
+    # Whole-body checks: big trunk tilt or a very low trunk (floor work) is hard for the K1 to balance through.
+    x, y = root_rot[:, 0], root_rot[:, 1]
+    tilt_deg = np.degrees(np.arccos(np.clip(1 - 2 * (x**2 + y**2), -1.0, 1.0)))  # trunk z-axis vs. vertical
+    report["max_trunk_tilt_deg"] = round(float(tilt_deg.max()), 1)
+    if tilt_deg.max() > args.max_tilt_deg:
+        report["reasons"].append(f"trunk tilts {tilt_deg.max():.0f} deg (> {args.max_tilt_deg:g})")
+    if root_pos[:, 2].min() < args.min_root_height:
+        report["reasons"].append(f"trunk drops to {root_pos[:, 2].min():.2f} m (< {args.min_root_height:g} m)")
+    report["verdict"] = "OK" if not report["reasons"] else "REVIEW"
 
     out_dir.mkdir(parents=True, exist_ok=True)
     csv_path = out_dir / f"{pkl_path.stem}.csv"
@@ -127,9 +196,10 @@ def convert(pkl_path, out_dir, lower, upper, args):
     (out_dir / f"{pkl_path.stem}.json").write_text(json.dumps(meta, indent=2))
 
     print(f"[{report['verdict']:6}] {pkl_path.name}: {meta['frames']} frames @ {fps:g} fps "
-          f"({meta['duration_s']} s), clipping in {report['frames_with_any_clipping_pct']}% of frames")
-    for name, stats in sorted(report["clipped_joints"].items(), key=lambda kv: -kv[1]["frames_clipped_pct"]):
-        print(f"           {name:28} {stats['frames_clipped_pct']:6.2f}% of frames, worst {stats['worst_violation_rad']:.3f} rad")
+          f"({meta['duration_s']} s), leg clipping in {report['frames_with_leg_clipping_pct']}% of frames, "
+          f"any clipping in {report['frames_with_any_clipping_pct']}%")
+    for reason in report["reasons"]:
+        print(f"           - {reason}")
     return meta
 
 
@@ -140,9 +210,13 @@ def main():
     p.add_argument("--limits-xml", type=Path, default=DEFAULT_LIMITS_XML,
                    help="K1 MJCF with the real joint limits (default: booster_assets K1_22dof.xml)")
     p.add_argument("--clip-frac-warn", type=float, default=0.05,
-                   help="Flag REVIEW if any joint is clipped in more than this fraction of frames (default 0.05)")
+                   help="Flag REVIEW if any leg joint is clipped in more than this fraction of frames (default 0.05)")
     p.add_argument("--clip-rad-warn", type=float, default=0.2,
-                   help="Flag REVIEW if any joint exceeds its limit by more than this many rad (default 0.2)")
+                   help="Flag REVIEW if any leg joint exceeds its limit by more than this many rad (default 0.2)")
+    p.add_argument("--max-tilt-deg", type=float, default=45.0,
+                   help="Flag REVIEW if the trunk tilts more than this from vertical (default 45)")
+    p.add_argument("--min-root-height", type=float, default=0.40,
+                   help="Flag REVIEW if the trunk drops below this height in m; standing is ~0.55 (default 0.40)")
     args = p.parse_args()
 
     if not args.limits_xml.exists():

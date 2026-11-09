@@ -126,7 +126,7 @@ def main():
         sys.exit("No input clips found.")
 
     lower, upper = gmr_to_k1_csv.load_joint_limits(gmr_to_k1_csv.DEFAULT_LIMITS_XML)
-    csv_args = argparse.Namespace(clip_frac_warn=0.05, clip_rad_warn=0.2)
+    csv_args = argparse.Namespace(clip_frac_warn=0.05, clip_rad_warn=0.2, max_tilt_deg=45.0, min_root_height=0.40)
     failed = []
     for i, src in enumerate(sources, 1):
         pkl_out = args.pkl_dir / f"{src.stem}.pkl"
