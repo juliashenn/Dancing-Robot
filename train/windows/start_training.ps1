@@ -2,6 +2,7 @@
 #
 #   powershell -File C:\isaac\start_training.ps1 -Task Booster-K1-MJ_Dance_002-v0 -RunName mj2_full
 #   powershell -File C:\isaac\start_training.ps1 -Task <task> -RunName <name> -ExtraArgs "--max_iterations 8000"
+#   resume:  -ExtraArgs "--resume --load_run <run folder> --checkpoint model_3000.pt"
 #
 # Log: C:\isaac\logs\train_<RunName>.log   Stop: Stop-ScheduledTask -TaskName train_<RunName>
 #
@@ -19,7 +20,7 @@ $Log = "C:\isaac\logs\train_$RunName.log"
 $TaskName = "train_$RunName"
 
 if (-not $Worker) {
-    $argList = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Minimized -File C:\isaac\start_training.ps1 " +
+    $argList = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\isaac\start_training.ps1 " +
                "-Task $Task -RunName $RunName -NumEnvs $NumEnvs -Worker"
     if ($ExtraArgs) { $argList += " -ExtraArgs `"$ExtraArgs`"" }
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argList
@@ -36,7 +37,9 @@ if (-not $Worker) {
 Set-Location C:\isaac\Dancing-Robot
 "== start $(Get-Date -Format s): task=$Task run=$RunName envs=$NumEnvs extra=$ExtraArgs" | Out-File -Encoding ascii $Log
 $cmd = "python third_party\booster_train\scripts\rsl_rl\train.py --task $Task --headless --num_envs $NumEnvs --run_name $RunName $ExtraArgs >> `"$Log`" 2>&1"
-$proc = Start-Process cmd.exe -ArgumentList "/c $cmd" -WindowStyle Minimized -PassThru
+# Hidden window: closing a visible console window kills training ("forrtl: error (200): program aborting
+# due to window-CLOSE event"), which ended the first MJ run at iteration 3421.
+$proc = Start-Process cmd.exe -ArgumentList "/c $cmd" -WindowStyle Hidden -PassThru
 
 # Wait for python to appear under cmd.exe, then remove throttling from it.
 for ($i = 0; $i -lt 60; $i++) {
