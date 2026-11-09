@@ -91,13 +91,22 @@ for ($attempt = 0; $attempt -le $MaxRestarts; $attempt++) {
            "--run_name $RunName $resumeArgs $ExtraArgs agent.save_interval=$SaveInterval >> `"$Log`" 2>&1"
     $proc = Start-Process cmd.exe -ArgumentList "/c $cmd" -WindowStyle Hidden -PassThru
 
-    # Wait for python to appear under cmd.exe, then remove throttling from it.
-    $py = $null
-    for ($i = 0; $i -lt 60 -and -not $py; $i++) {
-        $py = Get-CimInstance Win32_Process -Filter "ParentProcessId=$($proc.Id) AND Name='python.exe'"
-        if (-not $py) { Start-Sleep -Seconds 2 }
+    # Remove throttling from every python under cmd.exe. The venv's python.exe is a uv launcher that starts
+    # the real interpreter as a CHILD process, so walk the whole tree (fixing only the launcher left
+    # training throttled at ~5.3 s/iteration instead of ~2.7 s).
+    $py = @()
+    for ($i = 0; $i -lt 60 -and $py.Count -lt 2; $i++) {
+        Start-Sleep -Seconds 2
+        $all = Get-CimInstance Win32_Process
+        $tree = @($proc.Id)
+        do {
+            $added = @($all | Where-Object { $tree -contains $_.ParentProcessId -and $tree -notcontains $_.ProcessId } |
+                       ForEach-Object { $_.ProcessId })
+            $tree += $added
+        } while ($added.Count)
+        $py = @($all | Where-Object { $tree -contains $_.ProcessId -and $_.Name -eq "python.exe" })
     }
-    if ($py) { & C:\isaac\no_throttle.ps1 -ProcessIds $py.ProcessId | Out-File -Encoding ascii -Append $WatchLog }
+    if ($py.Count) { & C:\isaac\no_throttle.ps1 -ProcessIds ($py | ForEach-Object { $_.ProcessId }) | Out-File -Encoding ascii -Append $WatchLog }
     else { Write-Log "WARNING: python process not found; throttling not disabled" }
 
     $proc.WaitForExit()
