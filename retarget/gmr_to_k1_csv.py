@@ -178,9 +178,9 @@ def convert(pkl_path, out_dir, lower, upper, args):
     if root_pos[:, 2].min() < args.min_root_height:
         report["reasons"].append(f"trunk drops to {root_pos[:, 2].min():.2f} m (< {args.min_root_height:g} m)")
 
-    # Turning and travel: the deployed policy can't see its position or heading in the room, so fast
-    # spins and traveling steps don't transfer (Jazz1 spun ~500 deg/s for 12 s and traveled 4.5 m; in
-    # MuJoCo the policy kept facing forward and ended 1.7 m from the reference).
+    # Turning and travel: fast continuous spins are physically hard for the K1 and weren't learned, and
+    # traveling adds drift because the deployed policy doesn't observe its position (Jazz1 spun ~500 deg/s
+    # for 12 s and traveled 4.5 m; in MuJoCo the policy kept facing forward and ended 1.7 m away).
     w, z = root_rot[:, 3], root_rot[:, 2]
     yaw = np.unwrap(np.arctan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2)))
     yaw_rate = np.abs(np.gradient(np.degrees(yaw), 1.0 / fps)) if len(yaw) > 2 else np.zeros(1)
