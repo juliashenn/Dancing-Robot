@@ -47,3 +47,26 @@ class Pop1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
 class Pop1PPOCfg(BasePPORunnerCfg):
     max_iterations = 20000
     experiment_name = "k1_dance_pop1"
+
+
+# ---- Jazz1: AIST++ gJB_sBM_cAll_d08_mJB0_ch01 (12 s ballet jazz routine) -----------------------
+
+@configclass
+class Jazz1TrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Jazz1")
+
+
+@configclass
+class Jazz1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Jazz1")
+
+
+@configclass
+class Jazz1PPOCfg(BasePPORunnerCfg):
+    # Pop plateaued by ~5000 iterations; see deploy/README.md.
+    max_iterations = 5000
+    experiment_name = "k1_dance_jazz1"

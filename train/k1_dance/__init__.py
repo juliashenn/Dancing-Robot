@@ -16,6 +16,7 @@ import gymnasium as gym
 # Gym name -> clip stem in motions/k1_npz/
 DANCES = {
     "Pop1": "gPO_sBM_cAll_d10_mPO0_ch02",
+    "Jazz1": "gJB_sBM_cAll_d08_mJB0_ch01",
 }
 
 for _name in DANCES:
