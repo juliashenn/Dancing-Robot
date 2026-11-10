@@ -17,6 +17,7 @@ import gymnasium as gym
 DANCES = {
     "Pop1": "gPO_sBM_cAll_d10_mPO0_ch02",
     "Jazz1": "gJB_sBM_cAll_d08_mJB0_ch01",
+    "Lock1": "gLO_sBM_cAll_d13_mLO0_ch01",
 }
 
 for _name in DANCES:

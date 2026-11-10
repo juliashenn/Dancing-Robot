@@ -70,3 +70,25 @@ class Jazz1PPOCfg(BasePPORunnerCfg):
     # Pop plateaued by ~5000 iterations; see deploy/README.md.
     max_iterations = 5000
     experiment_name = "k1_dance_jazz1"
+
+
+# ---- Lock1: AIST++ gLO_sBM_cAll_d13_mLO0_ch01 (12 s locking routine) ---------------------------
+
+@configclass
+class Lock1TrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Lock1")
+
+
+@configclass
+class Lock1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Lock1")
+
+
+@configclass
+class Lock1PPOCfg(BasePPORunnerCfg):
+    max_iterations = 5000
+    experiment_name = "k1_dance_lock1"

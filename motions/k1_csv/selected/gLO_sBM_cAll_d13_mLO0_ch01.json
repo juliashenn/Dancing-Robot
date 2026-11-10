@@ -1,0 +1,148 @@
+{
+  "source": "motions\\gmr_pkl\\gLO_sBM_cAll_d13_mLO0_ch01.pkl",
+  "fps": 30.0,
+  "frames": 360,
+  "duration_s": 12.0,
+  "root_height_min_m": 0.535,
+  "root_height_max_m": 0.584,
+  "verdict": "OK",
+  "reasons": [],
+  "frames_with_any_clipping_pct": 0.0,
+  "frames_with_leg_clipping_pct": 0.0,
+  "clipped_joints": {},
+  "joint_speeds": {
+    "aahead_yaw_joint": {
+      "p99_rad_s": 1.48,
+      "max_rad_s": 1.76,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "aahead_pitch_joint": {
+      "p99_rad_s": 1.14,
+      "max_rad_s": 1.36,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_shoulder_pitch_joint": {
+      "p99_rad_s": 3.17,
+      "max_rad_s": 3.75,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_shoulder_roll_joint": {
+      "p99_rad_s": 4.34,
+      "max_rad_s": 5.5,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.3
+    },
+    "left_elbow_pitch_joint": {
+      "p99_rad_s": 3.74,
+      "max_rad_s": 3.94,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_elbow_yaw_joint": {
+      "p99_rad_s": 7.08,
+      "max_rad_s": 8.37,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 3.3
+    },
+    "right_shoulder_pitch_joint": {
+      "p99_rad_s": 2.26,
+      "max_rad_s": 2.6,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_shoulder_roll_joint": {
+      "p99_rad_s": 4.83,
+      "max_rad_s": 5.41,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.3
+    },
+    "right_elbow_pitch_joint": {
+      "p99_rad_s": 4.12,
+      "max_rad_s": 4.59,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_elbow_yaw_joint": {
+      "p99_rad_s": 7.54,
+      "max_rad_s": 8.7,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 3.3
+    },
+    "left_hip_pitch_joint": {
+      "p99_rad_s": 1.14,
+      "max_rad_s": 1.31,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_hip_roll_joint": {
+      "p99_rad_s": 0.53,
+      "max_rad_s": 0.6,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_hip_yaw_joint": {
+      "p99_rad_s": 0.4,
+      "max_rad_s": 0.48,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_knee_pitch_joint": {
+      "p99_rad_s": 1.75,
+      "max_rad_s": 1.86,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_ankle_pitch_joint": {
+      "p99_rad_s": 0.29,
+      "max_rad_s": 0.36,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "left_ankle_roll_joint": {
+      "p99_rad_s": 0.63,
+      "max_rad_s": 0.7,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_hip_pitch_joint": {
+      "p99_rad_s": 1.04,
+      "max_rad_s": 1.26,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_hip_roll_joint": {
+      "p99_rad_s": 0.28,
+      "max_rad_s": 0.37,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_hip_yaw_joint": {
+      "p99_rad_s": 0.46,
+      "max_rad_s": 0.68,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_knee_pitch_joint": {
+      "p99_rad_s": 2.22,
+      "max_rad_s": 2.93,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 1.4
+    },
+    "right_ankle_pitch_joint": {
+      "p99_rad_s": 0.25,
+      "max_rad_s": 0.46,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    },
+    "right_ankle_roll_joint": {
+      "p99_rad_s": 0.38,
+      "max_rad_s": 0.42,
+      "frames_over_motor_limit": 0,
+      "frames_over_full_torque_pct": 0.0
+    }
+  },
+  "max_trunk_tilt_deg": 9.0
+}
