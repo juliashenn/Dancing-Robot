@@ -38,5 +38,8 @@ Booster's `k1_mj2` task uses gains from an older booster_train K1 config (leg Kp
 | Ours, MJ dance, iteration 3000 (`k1_dance_mj2_ours`) | 25.2 / 25.2 s | 0.126 rad | 0.53 m |
 | Ours, AIST++ Pop (gPO_sBM_cAll_d10_mPO0_ch02), iteration 2500 | 12.0 / 12.0 s | 0.104 rad | 0.17 m |
 | Ours, AIST++ Pop, iteration 12750 (`k1_dance_pop1`) | 12.0 / 12.0 s | 0.092 rad | 0.19 m |
+| Ours, AIST++ Ballet Jazz (gJB_sBM_cAll_d08_mJB0_ch01), iteration 4999 (`k1_dance_jazz1`) | 12.0 / 12.0 s | 0.111 rad | **1.70 m** |
 
 Pop training in Isaac Lab plateaued after ~5000 iterations (body error ~2.5–3 cm, <0.5% failures); in MuJoCo, 12750 is only slightly better than 2500, so ~3000–5000 iterations is enough per clip.
+
+**Jazz1 lesson:** the clip is a sequence of traveling turns (~500 deg/s for 12 s, 4.5 m of travel). The policy survived but kept facing forward and didn't follow the spins (training: 7.6 cm body error, 2% failures at 5000 iterations vs Pop's 2.8 cm / 0.3%). The deployed policy can't see its heading or position in the room, so spins and traveling steps don't transfer. The feasibility filter now rejects clips turning faster than 300 deg/s (95th percentile) or traveling over 1 m; 35 of 41 Ballet Jazz clips fail it.

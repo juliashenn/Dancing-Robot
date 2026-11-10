@@ -1,11 +1,11 @@
-genre,clips,ok,ok_pct,ok_minutes,fail_leg_clipping,fail_too_fast,fail_tilt,fail_low,median_max_tilt_deg,median_leg_speed_p99
-Pop,43,41,95,7.9,0,0,2,0,12.6,5.1
-Street Jazz,42,38,90,5.8,0,0,3,2,11.2,1.5
-Lock,43,37,86,5.8,0,5,2,1,16.0,3.5
-Krump,41,35,85,5.6,0,2,5,1,28.0,7.4
-House,42,35,83,4.4,0,6,2,0,13.9,8.8
-LA Hip-hop,43,33,77,4.9,0,0,10,0,19.5,8.1
-Middle Hip-hop,43,33,77,5.5,0,5,7,2,24.0,9.5
-Ballet Jazz,41,31,76,4.6,0,5,8,0,24.8,8.4
-Waack,36,23,64,3.9,0,0,11,4,38.8,8.3
-Break,37,17,46,2.8,0,11,16,3,39.2,11.2
+genre,clips,ok,ok_pct,ok_minutes,fail_leg_clipping,fail_too_fast,fail_tilt,fail_low,fail_spin,fail_travel,median_max_tilt_deg,median_leg_speed_p99
+Lock,43,37,86,5.8,0,5,2,1,0,1,16.0,3.5
+Pop,43,37,86,6.6,0,0,2,0,2,2,12.6,5.1
+House,42,35,83,4.4,0,6,2,0,2,0,13.9,8.8
+Street Jazz,42,35,83,5.4,0,0,3,2,5,3,11.2,1.5
+Krump,41,34,83,5.4,0,2,5,1,4,0,28.0,7.4
+LA Hip-hop,43,31,72,4.6,0,0,10,0,4,0,19.5,8.1
+Middle Hip-hop,43,31,72,4.8,0,5,7,2,4,0,24.0,9.5
+Waack,36,16,44,2.8,0,0,11,4,9,4,38.8,8.3
+Break,37,16,43,2.6,0,11,16,3,7,0,39.2,11.2
+Ballet Jazz,41,3,7,0.4,0,5,8,0,35,34,24.8,8.4

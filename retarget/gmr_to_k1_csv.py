@@ -177,6 +177,21 @@ def convert(pkl_path, out_dir, lower, upper, args):
         report["reasons"].append(f"trunk tilts {tilt_deg.max():.0f} deg (> {args.max_tilt_deg:g})")
     if root_pos[:, 2].min() < args.min_root_height:
         report["reasons"].append(f"trunk drops to {root_pos[:, 2].min():.2f} m (< {args.min_root_height:g} m)")
+
+    # Turning and travel: the deployed policy can't see its position or heading in the room, so fast
+    # spins and traveling steps don't transfer (Jazz1 spun ~500 deg/s for 12 s and traveled 4.5 m; in
+    # MuJoCo the policy kept facing forward and ended 1.7 m from the reference).
+    w, z = root_rot[:, 3], root_rot[:, 2]
+    yaw = np.unwrap(np.arctan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2)))
+    yaw_rate = np.abs(np.gradient(np.degrees(yaw), 1.0 / fps)) if len(yaw) > 2 else np.zeros(1)
+    span = float(np.max(np.ptp(root_pos[:, :2], axis=0)))
+    report["yaw_rate_p95_deg_s"] = round(float(np.percentile(yaw_rate, 95)), 1)
+    report["total_turn_deg"] = round(float(np.degrees(np.abs(np.diff(yaw)).sum())), 1)
+    report["travel_span_m"] = round(span, 2)
+    if report["yaw_rate_p95_deg_s"] > args.max_yaw_rate:
+        report["reasons"].append(f"spins too fast (p95 {report['yaw_rate_p95_deg_s']:.0f} deg/s > {args.max_yaw_rate:g})")
+    if span > args.max_travel:
+        report["reasons"].append(f"travels {span:.2f} m (> {args.max_travel:g} m)")
     report["verdict"] = "OK" if not report["reasons"] else "REVIEW"
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -217,6 +232,10 @@ def main():
                    help="Flag REVIEW if the trunk tilts more than this from vertical (default 45)")
     p.add_argument("--min-root-height", type=float, default=0.40,
                    help="Flag REVIEW if the trunk drops below this height in m; standing is ~0.55 (default 0.40)")
+    p.add_argument("--max-yaw-rate", type=float, default=300.0,
+                   help="Flag REVIEW if the 95th-percentile turning speed exceeds this, deg/s (default 300; Pop1 127 and MJ 168 worked, Jazz1 665 did not)")
+    p.add_argument("--max-travel", type=float, default=1.0,
+                   help="Flag REVIEW if the trunk travels over a span larger than this, m (default 1.0)")
     args = p.parse_args()
 
     if not args.limits_xml.exists():

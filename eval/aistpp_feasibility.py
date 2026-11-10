@@ -18,16 +18,22 @@ import numpy as np
 REPO_ROOT = Path(__file__).resolve().parent.parent
 GENRES = {"gBR": "Break", "gPO": "Pop", "gLO": "Lock", "gMH": "Middle Hip-hop", "gLH": "LA Hip-hop",
           "gHO": "House", "gWA": "Waack", "gKR": "Krump", "gJS": "Street Jazz", "gJB": "Ballet Jazz"}
-REASON_KINDS = ("leg clipping", "too fast", "tilt", "low")
+REASON_KINDS = ("leg clipping", "too fast", "tilt", "low", "spin", "travel")
 
 
 def reason_kind(reason):
+    if "spins" in reason:  # check before "too fast": the spin message also says "too fast"
+        return "spin"
     if "clipped" in reason:
         return "leg clipping"
     if "too fast" in reason:
         return "too fast"
     if "tilts" in reason:
         return "tilt"
+    if "spins" in reason:
+        return "spin"
+    if "travels" in reason:
+        return "travel"
     return "low"
 
 
@@ -50,13 +56,16 @@ def main():
             "max_trunk_tilt_deg": m["max_trunk_tilt_deg"],
             "max_leg_speed_p99": max(v["p99_rad_s"] for v in legs.values()),
             "root_z_min": m["root_height_min_m"],
+            "yaw_rate_p95_deg_s": m.get("yaw_rate_p95_deg_s"),
+            "total_turn_deg": m.get("total_turn_deg"),
+            "travel_span_m": m.get("travel_span_m"),
         })
     if not clips:
         raise SystemExit(f"No AIST++ reports in {args.reports}")
 
     print(f"{len(clips)} clips, {sum(c['duration_s'] for c in clips) / 60:.1f} min\n")
     header = (f"{'Genre':15} {'clips':>5} {'OK':>4} {'OK%':>5} {'OK min':>6} | REVIEW because: "
-              f"{'legclip':>7} {'fast':>5} {'tilt':>5} {'low':>4} | {'med tilt':>8} {'med leg p99':>11}")
+              f"{'legclip':>7} {'fast':>5} {'tilt':>5} {'low':>4} {'spin':>5} {'trvl':>5} | {'med tilt':>8} {'med leg p99':>11}")
     print(header + "\n" + "-" * len(header))
     by_genre = collections.defaultdict(list)
     for c in clips:
@@ -75,7 +84,7 @@ def main():
         }
         rows.append(row)
         print(f"{row['genre']:15} {row['clips']:5} {row['ok']:4} {row['ok_pct']:4}% {row['ok_minutes']:6} |"
-              f"{'':16}{counts['leg clipping']:7} {counts['too fast']:5} {counts['tilt']:5} {counts['low']:4} |"
+              f"{'':16}{counts['leg clipping']:7} {counts['too fast']:5} {counts['tilt']:5} {counts['low']:4} {counts['spin']:5} {counts['travel']:5} |"
               f" {row['median_max_tilt_deg']:8} {row['median_leg_speed_p99']:11}")
     total_ok = sum(c["verdict"] == "OK" for c in clips)
     print(f"\nAll: {total_ok}/{len(clips)} OK ({100 * total_ok / len(clips):.0f}%), "

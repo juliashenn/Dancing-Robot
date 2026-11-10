@@ -79,5 +79,16 @@ class K1DancePop1Cfg(K1DanceControllerCfg):
         self.policy.checkpoint_path = asset("models/pop1_it12750.pt")
 
 
+@configclass
+class K1DanceJazz1Cfg(K1DanceControllerCfg):
+    """AIST++ ballet jazz clip gJB_sBM_cAll_d08_mJB0_ch01 (12 s), iteration 4999."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.policy.motion_path = asset("motions/gJB_sBM_cAll_d08_mJB0_ch01.npz")
+        self.policy.checkpoint_path = asset("models/jazz1_it4999.pt")
+
+
 register_task("k1_dance_mj2_ours", K1DanceMJ2OursCfg())
 register_task("k1_dance_pop1", K1DancePop1Cfg())
+register_task("k1_dance_jazz1", K1DanceJazz1Cfg())
