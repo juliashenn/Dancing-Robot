@@ -36,3 +36,7 @@ Booster's `k1_mj2` task uses gains from an older booster_train K1 config (leg Kp
 |---|---|---|---|
 | Booster's shipped MJ model (`k1_mj2`) | 25.2 / 25.2 s | 0.088 rad | 0.30 m |
 | Ours, MJ dance, iteration 3000 (`k1_dance_mj2_ours`) | 25.2 / 25.2 s | 0.126 rad | 0.53 m |
+| Ours, AIST++ Pop (gPO_sBM_cAll_d10_mPO0_ch02), iteration 2500 | 12.0 / 12.0 s | 0.104 rad | 0.17 m |
+| Ours, AIST++ Pop, iteration 12750 (`k1_dance_pop1`) | 12.0 / 12.0 s | 0.092 rad | 0.19 m |
+
+Pop training in Isaac Lab plateaued after ~5000 iterations (body error ~2.5–3 cm, <0.5% failures); in MuJoCo, 12750 is only slightly better than 2500, so ~3000–5000 iterations is enough per clip.

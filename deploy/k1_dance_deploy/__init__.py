@@ -69,4 +69,15 @@ class K1DanceMJ2OursCfg(K1DanceControllerCfg):
         self.policy.checkpoint_path = asset("models/mj2_ours_it3000.pt")
 
 
+@configclass
+class K1DancePop1Cfg(K1DanceControllerCfg):
+    """AIST++ Pop clip gPO_sBM_cAll_d10_mPO0_ch02 (12 s), latest exported checkpoint."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.policy.motion_path = asset("motions/gPO_sBM_cAll_d10_mPO0_ch02.npz")
+        self.policy.checkpoint_path = asset("models/pop1_it12750.pt")
+
+
 register_task("k1_dance_mj2_ours", K1DanceMJ2OursCfg())
+register_task("k1_dance_pop1", K1DancePop1Cfg())
