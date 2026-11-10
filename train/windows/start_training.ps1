@@ -5,6 +5,7 @@
 #   powershell -File C:\isaac\start_training.ps1 -Task Booster-K1-MJ_Dance_002-v0 -RunName mj2_full `
 #       -Script "third_party\booster_train\scripts\rsl_rl\train.py"
 #   powershell -File C:\isaac\start_training.ps1 -Task <task> -RunName <name> -MaxIterations 8000
+#   powershell -File C:\isaac\start_training.ps1 -Task <task> -RunName <name> -After <other run>   (queue)
 #   powershell -File C:\isaac\stop_training.ps1 -RunName <name>      (stop on purpose; no auto-restart)
 #
 # Logs: C:\isaac\logs\train_<RunName>.log (training output), train_<RunName>.watchdog.log (restarts)
@@ -26,6 +27,8 @@ param(
     [string]$ExtraArgs = "",
     # Our tasks (K1-Dance-*) need the wrapper; Booster's own tasks can use booster_train's script directly.
     [string]$Script = "train\run_rsl_rl.py train",
+    # Queue: wait until the run with this name has finished (its watchdog says "worker done") before starting.
+    [string]$After = "",
     [switch]$Worker   # internal: set when the scheduled task runs this script
 )
 $Log = "C:\isaac\logs\train_$RunName.log"                 # training output
@@ -37,19 +40,30 @@ $LogRoot = "C:\isaac\Dancing-Robot\logs\rsl_rl"
 function Write-Log($msg) { "== $(Get-Date -Format s) $msg" | Out-File -Encoding ascii -Append $WatchLog }
 
 if (-not $Worker) {
-    Remove-Item $StopFlag -ErrorAction SilentlyContinue
+    Remove-Item $StopFlag, $WatchLog -ErrorAction SilentlyContinue
     $argList = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\isaac\start_training.ps1 " +
                "-Task $Task -RunName $RunName -NumEnvs $NumEnvs -MaxIterations $MaxIterations " +
                "-SaveInterval $SaveInterval -MaxRestarts $MaxRestarts -Script `"$Script`" -Worker"
     if ($ExtraArgs) { $argList += " -ExtraArgs `"$ExtraArgs`"" }
+    if ($After) { $argList += " -After $After" }
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argList
     $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive
     $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Days 3) -Priority 4 `
         -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
     Register-ScheduledTask -TaskName $TaskName -Action $action -Principal $principal -Settings $settings -Force | Out-Null
     Start-ScheduledTask -TaskName $TaskName
-    "Started scheduled task $TaskName (target $MaxIterations iterations). Log: $Log"
+    $queued = if ($After) { ", queued after $After" } else { "" }
+    "Started scheduled task $TaskName (target $MaxIterations iterations$queued). Log: $Log"
     return
+}
+
+if ($After) {
+    $afterLog = "C:\isaac\logs\train_$After.watchdog.log"
+    "== $(Get-Date -Format s) queued: waiting for run $After to finish" | Out-File -Encoding ascii $WatchLog
+    while (-not ((Test-Path $afterLog) -and (Select-String -Path $afterLog -Pattern "worker done" -Quiet))) {
+        if (Test-Path $StopFlag) { "== $(Get-Date -Format s) stop flag found while queued" | Out-File -Encoding ascii -Append $WatchLog; return }
+        Start-Sleep -Seconds 60
+    }
 }
 
 # Newest checkpoint across this run's folders created since the worker started.
@@ -71,7 +85,7 @@ function Get-LatestCheckpoint($since) {
 Set-Location C:\isaac\Dancing-Robot
 $workerStart = (Get-Date).AddSeconds(-5)
 "== $(Get-Date -Format s) start: task=$Task run=$RunName envs=$NumEnvs target=$MaxIterations save_every=$SaveInterval extra=$ExtraArgs" |
-    Out-File -Encoding ascii $WatchLog
+    Out-File -Encoding ascii -Append $WatchLog
 "" | Out-File -Encoding ascii $Log
 
 for ($attempt = 0; $attempt -le $MaxRestarts; $attempt++) {

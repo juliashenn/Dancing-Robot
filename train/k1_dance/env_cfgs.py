@@ -92,3 +92,26 @@ class Lock1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
 class Lock1PPOCfg(BasePPORunnerCfg):
     max_iterations = 5000
     experiment_name = "k1_dance_lock1"
+
+
+# ---- Jazz1Slow: Jazz1 at 2.5x slower (30 s), to learn the spins --------------------------------
+# Original spins ~665 deg/s (p95) and weren't learned in 5000 iterations; slowed: ~270 deg/s.
+
+@configclass
+class Jazz1SlowTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Jazz1Slow")
+
+
+@configclass
+class Jazz1SlowPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Jazz1Slow")
+
+
+@configclass
+class Jazz1SlowPPOCfg(BasePPORunnerCfg):
+    max_iterations = 10000
+    experiment_name = "k1_dance_jazz1slow"

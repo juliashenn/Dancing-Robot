@@ -18,6 +18,8 @@ DANCES = {
     "Pop1": "gPO_sBM_cAll_d10_mPO0_ch02",
     "Jazz1": "gJB_sBM_cAll_d08_mJB0_ch01",
     "Lock1": "gLO_sBM_cAll_d13_mLO0_ch01",
+    # Jazz1 played 2.5x slower (csv_to_npz --input_fps 12 on the 30 fps CSV) so the spins are learnable.
+    "Jazz1Slow": "gJB_sBM_cAll_d08_mJB0_ch01_x2.5slow",
 }
 
 for _name in DANCES:
