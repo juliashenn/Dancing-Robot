@@ -99,7 +99,18 @@ class K1DanceLock1Cfg(K1DanceControllerCfg):
         self.policy.checkpoint_path = asset("models/lock1_it4999.pt")
 
 
+@configclass
+class K1DanceJazz1SlowCfg(K1DanceControllerCfg):
+    """The ballet jazz clip played 2.5x slower (30 s) so the spins are learnable, iteration 9999."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.policy.motion_path = asset("motions/gJB_sBM_cAll_d08_mJB0_ch01_x2.5slow.npz")
+        self.policy.checkpoint_path = asset("models/jazz1slow_it9999.pt")
+
+
 register_task("k1_dance_mj2_ours", K1DanceMJ2OursCfg())
 register_task("k1_dance_pop1", K1DancePop1Cfg())
 register_task("k1_dance_jazz1", K1DanceJazz1Cfg())
 register_task("k1_dance_lock1", K1DanceLock1Cfg())
+register_task("k1_dance_jazz1slow", K1DanceJazz1SlowCfg())

@@ -40,7 +40,10 @@ Booster's `k1_mj2` task uses gains from an older booster_train K1 config (leg Kp
 | Ours, AIST++ Pop, iteration 12750 (`k1_dance_pop1`) | 12.0 / 12.0 s | 0.092 rad | 0.19 m |
 | Ours, AIST++ Ballet Jazz (gJB_sBM_cAll_d08_mJB0_ch01), iteration 4999 (`k1_dance_jazz1`) | 12.0 / 12.0 s | 0.111 rad | **1.70 m** |
 | Ours, AIST++ Lock (gLO_sBM_cAll_d13_mLO0_ch01), iteration 4999 (`k1_dance_lock1`) | 12.0 / 12.0 s | **0.081 rad** | 0.09 m |
+| Ours, Ballet Jazz played 2.5× slower (30 s), iteration 9999 (`k1_dance_jazz1slow`) | 29.9 / 29.9 s | 0.107 rad | 0.34 m |
 
 Pop training in Isaac Lab plateaued after ~5000 iterations (body error ~2.5–3 cm, <0.5% failures); in MuJoCo, 12750 is only slightly better than 2500, so ~3000–5000 iterations is enough per clip.
 
 **Jazz1 lesson:** the clip is a sequence of traveling turns (~500 deg/s for 12 s, 4.5 m of travel). The policy survived but kept facing forward and didn't follow the spins (training: 7.6 cm body error, 2% failures at 5000 iterations vs Pop's 2.8 cm / 0.3%). Fast continuous spins (~1.4 turns/s on small flat feet) are physically hard and weren't learned in 5000 iterations, and traveling steps add drift because the policy doesn't observe its position in the room (it does observe its orientation). The feasibility filter now rejects clips turning faster than 300 deg/s (95th percentile) or traveling over 1 m; 35 of 41 Ballet Jazz clips fail it.
+
+**Slowing Jazz1 down fixed the spins:** the same clip resampled 2.5× slower (`csv_to_npz.py --input_fps 12`, ~270 deg/s turns) and trained for 10000 iterations follows the turns. Training orientation error fell from 1.40 rad to 0.35 rad and angular-velocity error from 6.0 to 1.5 rad/s; in MuJoCo it completes all 30 s with 0.34 m max drift instead of 1.70 m. (Speed and training length both changed, so this doesn't separate the two effects, but the original's orientation error had plateaued by 5000 iterations.)
