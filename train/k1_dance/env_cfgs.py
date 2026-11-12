@@ -115,3 +115,26 @@ class Jazz1SlowPlayCfg(PlayFlatWoStateEstimationEnvCfg):
 class Jazz1SlowPPOCfg(BasePPORunnerCfg):
     max_iterations = 10000
     experiment_name = "k1_dance_jazz1slow"
+
+
+# ---- HipHop1: AIST++ gLH_sBM_cAll_d16_mLH0_ch01 (12 s LA-style hip-hop) ------------------------
+# Energetic footwork (leg p99 7.2 rad/s), mild turning (93 deg/s p95), 0.5 m of travel.
+
+@configclass
+class HipHop1TrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("HipHop1")
+
+
+@configclass
+class HipHop1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("HipHop1")
+
+
+@configclass
+class HipHop1PPOCfg(BasePPORunnerCfg):
+    max_iterations = 10000
+    experiment_name = "k1_dance_hiphop1"
