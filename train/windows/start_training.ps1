@@ -6,6 +6,8 @@
 #       -Script "third_party\booster_train\scripts\rsl_rl\train.py"
 #   powershell -File C:\isaac\start_training.ps1 -Task <task> -RunName <name> -MaxIterations 8000
 #   powershell -File C:\isaac\start_training.ps1 -Task <task> -RunName <name> -After <other run>   (queue)
+#   powershell -File C:\isaac\start_training.ps1 -Task <task> -RunName <new name> -MaxIterations 20000 `
+#       -ResumeRun <old timestamp_run folder> -ResumeCheckpoint model_9999.pt   (extend a finished run)
 #   powershell -File C:\isaac\stop_training.ps1 -RunName <name>      (stop on purpose; no auto-restart)
 #
 # Logs: C:\isaac\logs\train_<RunName>.log (training output), train_<RunName>.watchdog.log (restarts)
@@ -29,6 +31,10 @@ param(
     [string]$Script = "train\run_rsl_rl.py train",
     # Queue: wait until the run with this name has finished (its watchdog says "worker done") before starting.
     [string]$After = "",
+    # Continue an earlier, finished run: its folder name under logs\rsl_rl\<experiment>\ and its checkpoint file.
+    # Used only until this run has saved its own checkpoint (crash restarts resume from this run's folders).
+    [string]$ResumeRun = "",
+    [string]$ResumeCheckpoint = "",
     [switch]$Worker   # internal: set when the scheduled task runs this script
 )
 $Log = "C:\isaac\logs\train_$RunName.log"                 # training output
@@ -46,6 +52,7 @@ if (-not $Worker) {
                "-SaveInterval $SaveInterval -MaxRestarts $MaxRestarts -Script `"$Script`" -Worker"
     if ($ExtraArgs) { $argList += " -ExtraArgs `"$ExtraArgs`"" }
     if ($After) { $argList += " -After $After" }
+    if ($ResumeRun) { $argList += " -ResumeRun $ResumeRun -ResumeCheckpoint $ResumeCheckpoint" }
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argList
     $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive
     $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Days 3) -Priority 4 `
@@ -90,6 +97,9 @@ $workerStart = (Get-Date).AddSeconds(-5)
 
 for ($attempt = 0; $attempt -le $MaxRestarts; $attempt++) {
     $latest = Get-LatestCheckpoint $workerStart
+    if (-not $latest -and $ResumeRun) {
+        $latest = [pscustomobject]@{ Iter = [int]($ResumeCheckpoint -replace "model_|\.pt", ""); Run = $ResumeRun; File = $ResumeCheckpoint }
+    }
     if ($latest -and $latest.Iter -ge $MaxIterations - 1) { Write-Log "target reached (model_$($latest.Iter))"; break }
     if ($latest) {
         # rsl_rl resumed from iteration N with --max_iterations R saves its last checkpoint as model_(N+R-1),
