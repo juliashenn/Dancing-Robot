@@ -57,6 +57,12 @@ from booster_deploy.controllers.mujoco_controller import MujocoController  # noq
 from booster_deploy.utils.registry import get_task  # noqa: E402
 
 
+def yaw_of(q):
+    """Yaw (rad) of a MuJoCo quaternion (w, x, y, z)."""
+    w, x, y, z = q
+    return float(np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)))
+
+
 def task_dir(cfg):
     module = sys.modules[type(cfg).__module__]
     return Path(module.__file__).resolve().parent
@@ -88,6 +94,7 @@ def main():
     ghost_rgba = np.array(cfg.mujoco.ghost_rgba, dtype=np.float32)
 
     joint_err, root_xy_err, heights, frames = [], [], [], 0
+    yaw, ref_yaw = [], []
     max_steps = int(args.max_seconds * fps)
     writer = imageio.get_writer(f"{out}.mp4", fps=fps, codec="libx264", quality=8, macro_block_size=8)
     t0 = time.time()
@@ -112,8 +119,13 @@ def main():
             ref = ctrl._reference_qpos
             joint_err.append(float(np.mean(np.abs(data.qpos[7:] - ref[7:]))))
             root_xy_err.append(float(np.linalg.norm(data.qpos[:2] - ref[:2])))
+            yaw.append(yaw_of(data.qpos[3:7]))
+            ref_yaw.append(yaw_of(ref[3:7]))
         heights.append(float(data.qpos[2]))
     writer.close()
+    # Heading (yaw) tracking, i.e. "does it do the spins": error per frame and total degrees turned.
+    yaw, ref_yaw = np.unwrap(yaw), np.unwrap(ref_yaw)
+    heading_err = np.degrees(np.abs((yaw - ref_yaw + np.pi) % (2 * np.pi) - np.pi))
 
     motion_frames = int(ctrl.policy.motion.time_step_total)
     completed = frames >= motion_frames
@@ -127,6 +139,10 @@ def main():
         "safety_stop": (not completed) and frames < max_steps,
         "mean_joint_error_rad": round(float(np.mean(joint_err)), 3) if joint_err else None,
         "max_root_xy_drift_m": round(float(np.max(root_xy_err)), 3) if root_xy_err else None,
+        "mean_heading_error_deg": round(float(np.mean(heading_err)), 1) if len(heading_err) else None,
+        "max_heading_error_deg": round(float(np.max(heading_err)), 1) if len(heading_err) else None,
+        "robot_total_turn_deg": round(float(np.degrees(np.sum(np.abs(np.diff(yaw))))))  if len(yaw) > 1 else None,
+        "reference_total_turn_deg": round(float(np.degrees(np.sum(np.abs(np.diff(ref_yaw))))))  if len(ref_yaw) > 1 else None,
         "min_trunk_height_m": round(float(np.min(heights)), 3),
         "wall_seconds": round(time.time() - t0, 1),
     }
