@@ -42,6 +42,7 @@ Booster's `k1_mj2` task uses gains from an older booster_train K1 config (leg Kp
 | Ours, AIST++ Lock (gLO_sBM_cAll_d13_mLO0_ch01), iteration 4999 (`k1_dance_lock1`) | 12.0 / 12.0 s | **0.081 rad** | 0.09 m |
 | Ours, Ballet Jazz played 2.5× slower (30 s), iteration 9999 | 29.9 / 29.9 s | 0.107 rad | 0.34 m |
 | Ours, Ballet Jazz 2.5× slower, iteration 19999 (`k1_dance_jazz1slow`) | 29.9 / 29.9 s | 0.106 rad | 0.78 m |
+| Ours, AIST++ LA Hip-hop (gLH_sBM_cAll_d16_mLH0_ch01), iteration 9999 (`k1_dance_hiphop1`) | 12.0 / 12.0 s | 0.132 rad | 0.63 m |
 
 Spin tracking for the Ballet Jazz clip (it turns ~4700°, about 13 full turns; `record_mujoco.py` reports heading error and total turn):
 

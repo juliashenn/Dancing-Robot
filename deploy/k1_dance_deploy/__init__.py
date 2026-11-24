@@ -109,8 +109,19 @@ class K1DanceJazz1SlowCfg(K1DanceControllerCfg):
         self.policy.checkpoint_path = asset("models/jazz1slow_it19999.pt")
 
 
+@configclass
+class K1DanceHipHop1Cfg(K1DanceControllerCfg):
+    """AIST++ LA hip-hop clip gLH_sBM_cAll_d16_mLH0_ch01 (12 s), iteration 9999."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.policy.motion_path = asset("motions/gLH_sBM_cAll_d16_mLH0_ch01.npz")
+        self.policy.checkpoint_path = asset("models/hiphop1_it9999.pt")
+
+
 register_task("k1_dance_mj2_ours", K1DanceMJ2OursCfg())
 register_task("k1_dance_pop1", K1DancePop1Cfg())
 register_task("k1_dance_jazz1", K1DanceJazz1Cfg())
 register_task("k1_dance_lock1", K1DanceLock1Cfg())
 register_task("k1_dance_jazz1slow", K1DanceJazz1SlowCfg())
+register_task("k1_dance_hiphop1", K1DanceHipHop1Cfg())
