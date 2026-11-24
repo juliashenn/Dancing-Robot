@@ -1,0 +1,11 @@
+# Build your own routine: list dances from the library (k1_dance_deploy/__init__.py, DANCE_LIBRARY) in order.
+# Every dance starts and ends in the neutral stance, so any order works; the sequencer switches policies
+# while the robot stands. Each routine becomes two booster_deploy tasks:
+#   k1_routine_<name>         MuJoCo (simulation gains):  deploy/record_mujoco.py --task k1_routine_<name>
+#   k1_routine_<name>_robot   real robot:                 python scripts/deploy.py --task k1_routine_<name>_robot
+# A routine is only registered once every dance in it has a trained model in models/.
+# Dances: lock, pop, hiphop, sjazz, krump, pop2
+
+lock_pop_hiphop: [lock, pop, hiphop]
+easy_three: [sjazz, pop2, krump]
+everything: [sjazz, lock, pop, krump, pop2, hiphop]

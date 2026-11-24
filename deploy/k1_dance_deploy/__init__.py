@@ -22,6 +22,8 @@ import copy
 import math
 import os
 
+import yaml
+
 from booster_deploy.utils.isaaclab.configclass import configclass
 from booster_deploy.utils.registry import register_task
 from tasks.beyond_mimic import beyond_mimic as _beyond_mimic
@@ -135,10 +137,30 @@ def sequence(*dances):
 # the handover is abrupt because Lock ends mid-move and Pop starts mid-move.
 SEQ_TEST = [("models/lock1_it4999.pt", "motions/gLO_sBM_cAll_d13_mLO0_ch01.npz"),
             ("models/pop1_it12750.pt", "motions/gPO_sBM_cAll_d10_mPO0_ch02.npz")]
-# Neutral-ended dances fine-tuned for switching (Lock1N / Pop1N / HipHop1N in train/k1_dance).
-LOCK_N = ("models/lock1n_it6999.pt", "motions/lock1n.npz")
-POP_N = ("models/pop1n_it15000.pt", "motions/pop1n.npz")
-HIPHOP_N = ("models/hiphop1n_it11999.pt", "motions/hiphop1n.npz")
+# Neutral-ended dances for switching (the *N tasks in train/k1_dance): name -> (model, motion).
+DANCE_LIBRARY = {
+    "lock": ("models/lock1n_it6999.pt", "motions/lock1n.npz"),        # fine-tuned from Lock1
+    "pop": ("models/pop1n_it15000.pt", "motions/pop1n.npz"),          # fine-tuned from Pop1
+    "hiphop": ("models/hiphop1n_it11999.pt", "motions/hiphop1n.npz"),  # fine-tuned from HipHop1
+    "sjazz": ("models/sjazz1n_it4999.pt", "motions/sjazz1n.npz"),     # Street Jazz, trained neutral-ended
+    "krump": ("models/krump1n_it4999.pt", "motions/krump1n.npz"),
+    "pop2": ("models/pop2n_it4999.pt", "motions/pop2n.npz"),
+}
+
+
+def load_routines():
+    """routines.yaml -> {name: [dance, ...]}, keeping only routines whose dances all have models."""
+    with open(os.path.join(_HERE, "routines.yaml")) as f:
+        routines = yaml.safe_load(f) or {}
+    ready = {}
+    for name, dances in routines.items():
+        unknown = [d for d in dances if d not in DANCE_LIBRARY]
+        if unknown:
+            print(f"[k1_dance] routine '{name}': unknown dances {unknown} (library: {list(DANCE_LIBRARY)})")
+            continue
+        if all(os.path.exists(os.path.join(_HERE, DANCE_LIBRARY[d][0])) for d in dances):
+            ready[name] = dances
+    return ready
 
 # Real robot: the ankles are a parallel linkage. Simulation Kd includes booster_train's armature_ratio
 # for the linkage (K1: 1.4 pitch, 0.4 roll), but robot.joint_damping is sent straight to the motor, so
@@ -161,13 +183,14 @@ def for_robot(cfg):
 
 TASKS = {
     "k1_dance_seq_test": sequence(*SEQ_TEST),
-    "k1_dance_seq1": sequence(LOCK_N, POP_N, HIPHOP_N),
     "k1_dance_mj2_ours": K1DanceMJ2OursCfg(),
     "k1_dance_pop1": K1DancePop1Cfg(),
     "k1_dance_jazz1": K1DanceJazz1Cfg(),
     "k1_dance_lock1": K1DanceLock1Cfg(),
     "k1_dance_jazz1slow": K1DanceJazz1SlowCfg(),
     "k1_dance_hiphop1": K1DanceHipHop1Cfg(),
+    **{f"k1_routine_{name}": sequence(*(DANCE_LIBRARY[d] for d in dances))
+       for name, dances in load_routines().items()},
 }
 # <name> uses the simulation gains (MuJoCo sim-to-sim); <name>_robot is the version to run on hardware.
 for _name, _cfg in TASKS.items():

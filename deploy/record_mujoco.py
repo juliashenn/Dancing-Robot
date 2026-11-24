@@ -33,6 +33,7 @@ p.add_argument("--max-seconds", type=float, default=60.0, help="Stop after this 
 p.add_argument("--width", type=int, default=960)
 p.add_argument("--height", type=int, default=720)
 p.add_argument("--no-ghost", action="store_true", help="Don't draw the reference robot")
+p.add_argument("--no-video", action="store_true", help="Only compute the metrics (JSON); much faster")
 args = p.parse_args()
 # Resolve user paths before changing directory.
 args.checkpoint = args.checkpoint.resolve() if args.checkpoint else None
@@ -61,6 +62,27 @@ def yaw_of(q):
     """Yaw (rad) of a MuJoCo quaternion (w, x, y, z)."""
     w, x, y, z = q
     return float(np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)))
+
+
+def per_dance_metrics(switch_frames, frames, fps, dances, joint_err, xy_err, heading_err, handoff_s=1.0):
+    """Metrics for each dance of a sequence, plus the first `handoff_s` seconds after each policy took over
+    (where a bad handoff would show up). Drift is measured from where that dance started."""
+    bounds = list(switch_frames) + [frames]
+    result = []
+    for i, (start, end) in enumerate(zip(bounds[:-1], bounds[1:])):
+        if end <= start:
+            continue
+        h = slice(start, min(end, start + int(handoff_s * fps)))
+        result.append({
+            "dance": Path(dances[i][1]).stem,
+            "start_s": round(start / fps, 2), "end_s": round(end / fps, 2),
+            "mean_joint_error_rad": round(float(joint_err[start:end].mean()), 3),
+            "max_root_xy_drift_m": round(float(xy_err[start:end].max()), 3),
+            "mean_heading_error_deg": round(float(heading_err[start:end].mean()), 1),
+            "handoff_joint_error_rad": round(float(joint_err[h].mean()), 3),
+            "handoff_max_heading_error_deg": round(float(heading_err[h].max()), 1),
+        })
+    return result
 
 
 def task_dir(cfg):
@@ -96,7 +118,8 @@ def main():
     joint_err, root_xy_err, heights, frames = [], [], [], 0
     yaw, ref_yaw = [], []
     max_steps = int(args.max_seconds * fps)
-    writer = imageio.get_writer(f"{out}.mp4", fps=fps, codec="libx264", quality=8, macro_block_size=8)
+    writer = None if args.no_video else imageio.get_writer(
+        f"{out}.mp4", fps=fps, codec="libx264", quality=8, macro_block_size=8)
     t0 = time.time()
     ctrl.update_state()
     ctrl.start()
@@ -106,14 +129,15 @@ def main():
         ctrl.ctrl_step(dof_targets)
         frames += 1
 
-        cam.lookat[:] = data.qpos[:3]
-        renderer.update_scene(data, cam)
-        if not args.no_ghost and ctrl._reference_qpos is not None:
-            n0 = renderer.scene.ngeom
-            mujoco.mjv_addGeoms(model, ghost, ghost_opt, pert, int(mujoco.mjtCatBit.mjCAT_DYNAMIC), renderer.scene)
-            for i in range(n0, renderer.scene.ngeom):
-                renderer.scene.geoms[i].rgba[:] = ghost_rgba
-        writer.append_data(renderer.render())
+        if writer:
+            cam.lookat[:] = data.qpos[:3]
+            renderer.update_scene(data, cam)
+            if not args.no_ghost and ctrl._reference_qpos is not None:
+                n0 = renderer.scene.ngeom
+                mujoco.mjv_addGeoms(model, ghost, ghost_opt, pert, int(mujoco.mjtCatBit.mjCAT_DYNAMIC), renderer.scene)
+                for i in range(n0, renderer.scene.ngeom):
+                    renderer.scene.geoms[i].rgba[:] = ghost_rgba
+            writer.append_data(renderer.render())
 
         if ctrl._reference_qpos is not None:
             ref = ctrl._reference_qpos
@@ -122,7 +146,8 @@ def main():
             yaw.append(yaw_of(data.qpos[3:7]))
             ref_yaw.append(yaw_of(ref[3:7]))
         heights.append(float(data.qpos[2]))
-    writer.close()
+    if writer:
+        writer.close()
     # Heading (yaw) tracking, i.e. "does it do the spins": error per frame and total degrees turned.
     yaw, ref_yaw = np.unwrap(yaw), np.unwrap(ref_yaw)
     heading_err = np.degrees(np.abs((yaw - ref_yaw + np.pi) % (2 * np.pi) - np.pi))
@@ -149,9 +174,13 @@ def main():
         "min_trunk_height_m": round(float(np.min(heights)), 3),
         "wall_seconds": round(time.time() - t0, 1),
     }
+    if hasattr(ctrl.policy, "switch_frames") and len(joint_err) == frames:
+        summary["per_dance"] = per_dance_metrics(ctrl.policy.switch_frames, frames, fps, cfg.policy.dances,
+                                                 np.array(joint_err), np.array(root_xy_err), heading_err)
     Path(f"{out}.json").write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2))
-    print(f"video: {out}.mp4")
+    if writer:
+        print(f"video: {out}.mp4")
 
 
 if __name__ == "__main__":

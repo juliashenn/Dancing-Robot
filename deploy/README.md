@@ -39,7 +39,7 @@ Checklist for the session with the robot (from booster_deploy's README plus our 
 3. **Run a `_robot` task, never the plain one:** `python scripts/deploy.py --task k1_dance_lock1_robot`. Start with Lock (most accurate, least drift), then Pop; leave Hip-hop and slowed Jazz (more travel/turning) for later.
 4. **Start-up:** press `X` (remote) to enter Custom mode; the K1's default `prepare_mode="walking"` holds the robot standing with Booster's walking policy. Press `A` (or `r` on the keyboard) to start the dance. When the motion ends the controller exits to walking mode (default `exit_mode`), so the robot keeps balancing.
 5. **Safety:** someone on the gantry/harness, 1–2 m of clear floor (Lock drifts ~0.1 m in sim, Hip-hop ~0.6 m, slowed Jazz ~0.8 m). The policy's safety fallback stops it if the trunk orientation differs a lot from the reference.
-6. **Sequences:** `k1_dance_seq1_robot` (Lock → Pop → Hip-hop, switching policies in the neutral stance) once its MuJoCo test passes.
+6. **Routines:** `k1_routine_<name>_robot` for each routine in `k1_dance_deploy/routines.yaml` (dances switch policies in the neutral stance). Edit that file to build a new routine; it appears once all its dances have trained models. Run its MuJoCo test first.
 
 ## Results so far
 
