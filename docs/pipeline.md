@@ -3,22 +3,39 @@
 ## Offline: from human mocap to a policy
 
 ```
-Human mocap (LAFAN1 BVH / AMASS / AIST++)
-  │  GMR (booster_k1)                      ← retarget/
+AIST++ human dance (SMPL, 60 fps)
+  │  retarget/retarget_to_k1.py: GMR (booster_k1), ground the clip, 30 fps
   ▼
-K1 joint trajectory (.csv, BeyondMimic format)
-  │  feasibility filter, join segments,
-  │  blend transitions, time to music      ← choreography/
+K1 joint trajectory (.csv, BeyondMimic format) + feasibility report (.json)
+  │  retarget/gmr_to_k1_csv.py: joint limits, motor speed, trunk tilt, spin rate, travel
+  │  eval/aistpp_feasibility.py: 275 of 411 clips OK
+  │  eval/rank_clips_for_sequencing.py: easiest clips to train and to start/end in neutral
   ▼
-csv_to_npz.py (booster_train)              ← motions/k1_npz/
+retarget/make_routine.py: blend in from / out to the neutral stance (one clip, or several chained)
+  ▼                                                  → motions/k1_csv/selected/<name>.csv
+csv_to_npz.py (booster_train, on the desktop)        → motions/k1_npz/<name>.npz
   ▼
-Isaac Lab training (PPO)                   ← train/
-  │  play.py → export policy (.pt/.onnx)
+Isaac Lab training, PPO, 4096 envs (desktop)         ← train/k1_dance (tasks), train/windows (launcher)
+  │  ~5000 iterations for easy clips, 10000–20000 with turns; play.py exports the policy (.pt/.onnx)
   ▼
-booster_deploy --mujoco                    ← deploy/  (check in a second simulator)
+booster_deploy in MuJoCo (laptop)                    ← deploy/record_mujoco.py, eval/evaluate_policies.py
   ▼
-booster_deploy on the K1 (gantry first)
+booster_deploy on the K1: <task>_robot tasks (motor-side ankle Kd), see deploy/README.md
 ```
+
+## Chaining dances into a routine
+
+Every dance in the library (`deploy/k1_dance_deploy/__init__.py`, `DANCE_LIBRARY`) starts and ends in the
+same neutral stance (booster_train's default pose: legs straight, arms at the sides), and its policy is trained
+on that neutral-ended clip. A routine is a list of dances in `deploy/k1_dance_deploy/routines.yaml`.
+
+At runtime the sequencer (`deploy/k1_dance_deploy/sequence.py`) runs one dance's policy at a time. When a
+dance's motion ends (robot standing in neutral), it resets the next dance's policy and hands over. The reset
+makes the new policy treat the robot's current heading as "forward", so heading errors don't carry over; the
+policies don't observe position, so nothing else needs re-anchoring.
+
+Fallback: `make_routine.py` can also chain several clips into one long motion and train a single policy on it
+(`Routine1` task). That's less flexible (a new ~12 h training per routine) but has no policy handoffs.
 
 ## Runtime: what the robot does every 20 ms
 

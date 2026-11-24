@@ -1,10 +1,14 @@
 # choreography/
 
-Builds the final routine from retargeted clips in `motions/k1_csv/`.
+Building routines from retargeted clips. The pieces ended up next to the code they extend:
 
-- **Feasibility filter:** flag clips that hit joint limits, slide the feet, or move too fast for the K1.
-- **Segments:** cut the useful parts of each clip; have each one end near a neutral stance.
-- **Transitions:** blend 0.5–1 s between segments.
-- **Music:** time segment boundaries to the song's beats.
+| Step | Where |
+|---|---|
+| Feasibility filter (joint limits, motor speed, trunk tilt, spins, travel) | `retarget/gmr_to_k1_csv.py`, summary in `eval/aistpp_feasibility.py` |
+| Pick clips that are easy to train and to start/end in neutral | `eval/rank_clips_for_sequencing.py` → `eval/results/sequencing_candidates.csv` |
+| Blend a clip in from / out to the neutral stance, or chain several clips into one motion | `retarget/make_routine.py` |
+| Build a routine from trained dances (policies switch in the neutral stance) | `deploy/k1_dance_deploy/routines.yaml` |
 
-Output: one combined `.csv` for the routine, converted to `.npz` in `motions/k1_npz/` with booster_train's `csv_to_npz.py`.
+Not done: timing segment boundaries to music.
+
+See [docs/pipeline.md](../docs/pipeline.md#chaining-dances-into-a-routine) for how chaining works.

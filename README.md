@@ -7,16 +7,17 @@ We teach the Booster K1 humanoid to perform a dance routine retargeted from publ
 ## Pipeline
 
 ```
-Human mocap (BVH / SMPL-X)
-  → retarget/      GMR (booster_k1) → K1 joint trajectory (.csv)
-  → choreography/  filter clips, join segments, blend transitions, time to music
+AIST++ human dance (SMPL)
+  → retarget/      GMR (booster_k1) → K1 joint trajectory (.csv) + feasibility check
+  → retarget/make_routine.py   start/end each dance in a neutral stance
   → csv_to_npz     reference motion (.npz)
-  → train/         Isaac Lab tracking policy (PPO) → exported .pt / .onnx
-  → deploy/        booster_deploy: MuJoCo check, then the real K1
-  → eval/          tracking metrics and plots
+  → train/         Isaac Lab tracking policy (PPO), one per dance → exported .pt / .onnx
+  → deploy/        booster_deploy: MuJoCo check, then the real K1;
+                   routines.yaml chains dances by switching policies in the neutral stance
+  → eval/          clip ranking, MuJoCo results table
 ```
 
-See [docs/pipeline.md](docs/pipeline.md) for the runtime flowchart of the robot.
+See [docs/pipeline.md](docs/pipeline.md) for the full pipeline, how dances are chained, and the runtime flowchart of the robot. Results so far: [deploy/README.md](deploy/README.md#results-so-far) and [eval/results/mujoco_results.md](eval/results/mujoco_results.md).
 
 ## Repo layout
 
