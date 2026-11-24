@@ -34,6 +34,9 @@ p.add_argument("--width", type=int, default=960)
 p.add_argument("--height", type=int, default=720)
 p.add_argument("--no-ghost", action="store_true", help="Don't draw the reference robot")
 p.add_argument("--no-video", action="store_true", help="Only compute the metrics (JSON); much faster")
+p.add_argument("--start-stance", choices=["default", "walk"], default="default",
+               help="Initial pose: booster_deploy's default (= our neutral stance) or the K1 walking policy's "
+                    "stance, which is what the real robot is in when the dance starts (prepare_mode='walking')")
 args = p.parse_args()
 # Resolve user paths before changing directory.
 args.checkpoint = args.checkpoint.resolve() if args.checkpoint else None
@@ -85,6 +88,25 @@ def per_dance_metrics(switch_frames, frames, fps, dances, joint_err, xy_err, hea
     return result
 
 
+# K1 walking policy's standing pose (booster_deploy tasks/locomotion/robots/k1, real joint order): on the robot,
+# the walking policy holds this stance until A is pressed and the dance policy takes over.
+WALK_STANCE = [0, 0, 0.2, -1.25, 0, -0.5, 0.2, 1.25, 0, 0.5,
+               -0.15, 0, 0, 0.3, -0.15, 0, -0.15, 0, 0, 0.3, -0.15, 0]
+
+
+def set_stance(model, data, joints):
+    """Put the robot in `joints` with its lowest geom resting on the floor plane."""
+    data.qpos[7:] = joints
+    mujoco.mj_forward(model, data)
+    planes = [g for g in range(model.ngeom) if model.geom_type[g] == mujoco.mjtGeom.mjGEOM_PLANE]
+    fromto = np.zeros(6)
+    gap = min(mujoco.mj_geomDistance(model, data, planes[0], g, 1.0, fromto)
+              for g in range(model.ngeom) if g not in planes and model.geom_bodyid[g] != 0)
+    data.qpos[2] -= gap
+    data.qvel[:] = 0
+    mujoco.mj_forward(model, data)
+
+
 def task_dir(cfg):
     module = sys.modules[type(cfg).__module__]
     return Path(module.__file__).resolve().parent
@@ -106,6 +128,8 @@ def main():
 
     ctrl = MujocoController(cfg)
     model, data, ghost = ctrl.mj_model, ctrl.mj_data, ctrl._ghost_mj_data
+    if args.start_stance == "walk":
+        set_stance(model, data, WALK_STANCE)
     fps = round(1.0 / cfg.policy_dt)
     model.vis.global_.offwidth = max(model.vis.global_.offwidth, args.width)
     model.vis.global_.offheight = max(model.vis.global_.offheight, args.height)
@@ -156,6 +180,7 @@ def main():
     completed = frames >= motion_frames
     summary = {
         "task": args.task,
+        "start_stance": args.start_stance,
         "checkpoint": cfg.policy.checkpoint_path,
         # Sequences (k1_dance_deploy/sequence.py): when each dance's policy took over.
         **({"dance_start_times_s": [round(f / fps, 2) for f in ctrl.policy.switch_frames]}
