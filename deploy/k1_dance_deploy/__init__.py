@@ -25,6 +25,8 @@ from booster_deploy.utils.registry import register_task
 from tasks.beyond_mimic import beyond_mimic as _beyond_mimic
 from tasks.beyond_mimic.robots.k1 import K1BeyondMimicControllerCfg
 
+from .sequence import DanceSequencePolicyCfg
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _POLICY_DIR = os.path.dirname(os.path.abspath(_beyond_mimic.__file__))
 
@@ -119,6 +121,25 @@ class K1DanceHipHop1Cfg(K1DanceControllerCfg):
         self.policy.checkpoint_path = asset("models/hiphop1_it9999.pt")
 
 
+def sequence(*dances):
+    """Controller config that plays (model, motion) pairs back to back, switching policies in neutral."""
+    cfg = K1DanceControllerCfg()
+    cfg.policy = DanceSequencePolicyCfg(
+        template=cfg.policy, dances=[(asset(model), asset(motion)) for model, motion in dances])
+    return cfg
+
+
+# Smoke test of the switching code with the original (not neutral-ended) Lock and Pop policies:
+# the handover is abrupt because Lock ends mid-move and Pop starts mid-move.
+SEQ_TEST = [("models/lock1_it4999.pt", "motions/gLO_sBM_cAll_d13_mLO0_ch01.npz"),
+            ("models/pop1_it12750.pt", "motions/gPO_sBM_cAll_d10_mPO0_ch02.npz")]
+# Neutral-ended dances fine-tuned for switching (Lock1N / Pop1N / HipHop1N in train/k1_dance).
+LOCK_N = ("models/lock1n_it6999.pt", "motions/lock1n.npz")
+POP_N = ("models/pop1n_it15000.pt", "motions/pop1n.npz")
+HIPHOP_N = ("models/hiphop1n_it11999.pt", "motions/hiphop1n.npz")
+
+register_task("k1_dance_seq_test", sequence(*SEQ_TEST))
+register_task("k1_dance_seq1", sequence(LOCK_N, POP_N, HIPHOP_N))
 register_task("k1_dance_mj2_ours", K1DanceMJ2OursCfg())
 register_task("k1_dance_pop1", K1DancePop1Cfg())
 register_task("k1_dance_jazz1", K1DanceJazz1Cfg())

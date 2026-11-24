@@ -132,7 +132,10 @@ def main():
     summary = {
         "task": args.task,
         "checkpoint": cfg.policy.checkpoint_path,
-        "motion": cfg.policy.motion_path,
+        # Sequences (k1_dance_deploy/sequence.py): when each dance's policy took over.
+        **({"dance_start_times_s": [round(f / fps, 2) for f in ctrl.policy.switch_frames]}
+           if hasattr(ctrl.policy, "switch_frames") else {}),
+        "motion": getattr(cfg.policy, "motion_path", None) or [m for _, m in cfg.policy.dances],
         "motion_seconds": round(motion_frames / fps, 2),
         "ran_seconds": round(frames / fps, 2),
         "completed_motion": completed,
