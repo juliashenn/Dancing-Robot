@@ -21,6 +21,8 @@ DANCES = {
     # Jazz1 played 2.5x slower (csv_to_npz --input_fps 12 on the 30 fps CSV) so the spins are learnable.
     "Jazz1Slow": "gJB_sBM_cAll_d08_mJB0_ch01_x2.5slow",
     "HipHop1": "gLH_sBM_cAll_d16_mLH0_ch01",
+    # Lock1 -> Pop1 -> HipHop1 through a neutral stance (retarget/make_routine.py), 39 s.
+    "Routine1": "routine1",
 }
 
 for _name in DANCES:

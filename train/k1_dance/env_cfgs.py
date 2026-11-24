@@ -138,3 +138,27 @@ class HipHop1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
 class HipHop1PPOCfg(BasePPORunnerCfg):
     max_iterations = 10000
     experiment_name = "k1_dance_hiphop1"
+
+
+# ---- Routine1: Lock1 -> Pop1 -> HipHop1 chained through a neutral stance (39 s) ----------------
+# Built with retarget/make_routine.py (1 s blends in/out of each clip, 0.5 s neutral holds between,
+# 1 s at both ends). One policy for the whole routine: no switching between policies mid-dance.
+
+@configclass
+class Routine1TrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Routine1")
+
+
+@configclass
+class Routine1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Routine1")
+
+
+@configclass
+class Routine1PPOCfg(BasePPORunnerCfg):
+    max_iterations = 15000
+    experiment_name = "k1_dance_routine1"
