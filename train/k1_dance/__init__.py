@@ -23,6 +23,10 @@ DANCES = {
     "HipHop1": "gLH_sBM_cAll_d16_mLH0_ch01",
     # Lock1 -> Pop1 -> HipHop1 through a neutral stance (retarget/make_routine.py), 39 s.
     "Routine1": "routine1",
+    # Same dances starting and ending in the neutral stance, for switching policies between dances.
+    "Lock1N": "lock1n",
+    "Pop1N": "pop1n",
+    "HipHop1N": "hiphop1n",
 }
 
 for _name in DANCES:

@@ -162,3 +162,69 @@ class Routine1PlayCfg(PlayFlatWoStateEstimationEnvCfg):
 class Routine1PPOCfg(BasePPORunnerCfg):
     max_iterations = 15000
     experiment_name = "k1_dance_routine1"
+
+
+# ---- Neutral-bookended dances for policy switching (Lock1N, Pop1N, HipHop1N) --------------------
+# Each clip starts and ends in the neutral stance (retarget/make_routine.py --hold-ends 0.5 <clip>), so
+# the deploy-side sequencer can hand over from one dance's policy to the next while standing.
+# They are fine-tuned from the original dance's policy, so they share its experiment folder
+# (rsl_rl --resume looks for --load_run inside the experiment folder).
+
+@configclass
+class Lock1NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Lock1N")
+
+
+@configclass
+class Lock1NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Lock1N")
+
+
+@configclass
+class Lock1NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 2000
+    experiment_name = "k1_dance_lock1"
+
+
+@configclass
+class Pop1NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Pop1N")
+
+
+@configclass
+class Pop1NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Pop1N")
+
+
+@configclass
+class Pop1NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 2000
+    experiment_name = "k1_dance_pop1"
+
+
+@configclass
+class HipHop1NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("HipHop1N")
+
+
+@configclass
+class HipHop1NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("HipHop1N")
+
+
+@configclass
+class HipHop1NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 2000
+    experiment_name = "k1_dance_hiphop1"
