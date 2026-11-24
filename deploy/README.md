@@ -28,7 +28,18 @@ Grey robot = policy under MuJoCo physics; translucent green = reference motion.
 
 Booster's `k1_mj2` task uses gains from an older booster_train K1 config (leg Kp 80/30, action scale 0.25·effort/Kp). Our policies are trained with the current booster_train config, so `K1DanceControllerCfg` sets the training-time Kp, Kd, effort limits and per-joint action scale. With `k1_mj2`'s values our MJ policy fell after 2.3 s; with ours it completes the 25 s dance.
 
-**Before the real robot:** the K1 ankles are a parallel linkage; per booster_train's README, recompute the ankle Kd motor-side instead of sending the simulation value.
+**Real robot ankle damping:** the K1 ankles are a parallel linkage, and booster_deploy sends `joint_damping` straight to the motors, so the simulation ankle Kd (2.98 pitch / 0.85 roll, which include booster_train's armature ratio) must not be used on hardware. Every task has a `<task>_robot` version with the motor-side value Kd = 2·ζ·J_motor·2πf = 2·1.5·0.0282528·2π·4 = **2.13** on all four ankle joints (Booster's own k1_mj2 config uses 2.0). In MuJoCo, `k1_dance_lock1_robot` performs the same as `k1_dance_lock1` (0.079 vs 0.081 rad, 0.09 m drift).
+
+## Running on the real K1
+
+Checklist for the session with the robot (from booster_deploy's README plus our setup):
+
+1. **Copy our task into booster_deploy on the robot:** `deploy/k1_dance_deploy/` → `booster_deploy/tasks/k1_dance/` (models and motions are inside it). booster_deploy imports every package under `tasks/`, so nothing else needs registering. Check with `python scripts/deploy.py --list`: the `k1_dance_*` tasks should be listed.
+2. **Environment on the robot:** activate booster_deploy's `.venv` (needs torch, numpy, scipy, pyyaml; see its requirements.txt), then `source /opt/booster/BoosterRos2Interface/install/setup.bash`. Firmware must be ≥ v1.7.2.
+3. **Run a `_robot` task, never the plain one:** `python scripts/deploy.py --task k1_dance_lock1_robot`. Start with Lock (most accurate, least drift), then Pop; leave Hip-hop and slowed Jazz (more travel/turning) for later.
+4. **Start-up:** press `X` (remote) to enter Custom mode; the K1's default `prepare_mode="walking"` holds the robot standing with Booster's walking policy. Press `A` (or `r` on the keyboard) to start the dance. When the motion ends the controller exits to walking mode (default `exit_mode`), so the robot keeps balancing.
+5. **Safety:** someone on the gantry/harness, 1–2 m of clear floor (Lock drifts ~0.1 m in sim, Hip-hop ~0.6 m, slowed Jazz ~0.8 m). The policy's safety fallback stops it if the trunk orientation differs a lot from the reference.
+6. **Sequences:** `k1_dance_seq1_robot` (Lock → Pop → Hip-hop, switching policies in the neutral stance) once its MuJoCo test passes.
 
 ## Results so far
 

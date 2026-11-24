@@ -18,6 +18,8 @@ REAL ROBOT NOTE: the K1 ankles are a parallel linkage. booster_train's README sa
 the simulation ankle Kd to the motors; recompute it motor-side before running on hardware.
 """
 
+import copy
+import math
 import os
 
 from booster_deploy.utils.isaaclab.configclass import configclass
@@ -138,11 +140,36 @@ LOCK_N = ("models/lock1n_it6999.pt", "motions/lock1n.npz")
 POP_N = ("models/pop1n_it15000.pt", "motions/pop1n.npz")
 HIPHOP_N = ("models/hiphop1n_it11999.pt", "motions/hiphop1n.npz")
 
-register_task("k1_dance_seq_test", sequence(*SEQ_TEST))
-register_task("k1_dance_seq1", sequence(LOCK_N, POP_N, HIPHOP_N))
-register_task("k1_dance_mj2_ours", K1DanceMJ2OursCfg())
-register_task("k1_dance_pop1", K1DancePop1Cfg())
-register_task("k1_dance_jazz1", K1DanceJazz1Cfg())
-register_task("k1_dance_lock1", K1DanceLock1Cfg())
-register_task("k1_dance_jazz1slow", K1DanceJazz1SlowCfg())
-register_task("k1_dance_hiphop1", K1DanceHipHop1Cfg())
+# Real robot: the ankles are a parallel linkage. Simulation Kd includes booster_train's armature_ratio
+# for the linkage (K1: 1.4 pitch, 0.4 roll), but robot.joint_damping is sent straight to the motor, so
+# booster_train's README says to recompute it with motor-side inertia and no armature_ratio:
+#   Kd = 2 * zeta * J_motor * (2*pi*f) = 2 * 1.5 * 0.0282528 (E4310) * 2*pi*4 = 2.130
+# (Booster's own k1_mj2 deploy config uses 2.0 on the ankles.) Kp keeps the training value.
+ROBOT_ANKLE_KD = 2 * 1.5 * 0.0282528 * (2 * math.pi * 4.0)
+ANKLE_INDICES = (14, 15, 20, 21)  # L ankle pitch/roll, R ankle pitch/roll (booster_deploy real order)
+
+
+def for_robot(cfg):
+    """Same task with the motor-side ankle damping for hardware."""
+    cfg = copy.deepcopy(cfg)
+    damping = list(cfg.robot.joint_damping)
+    for i in ANKLE_INDICES:
+        damping[i] = ROBOT_ANKLE_KD
+    cfg.robot.joint_damping = damping
+    return cfg
+
+
+TASKS = {
+    "k1_dance_seq_test": sequence(*SEQ_TEST),
+    "k1_dance_seq1": sequence(LOCK_N, POP_N, HIPHOP_N),
+    "k1_dance_mj2_ours": K1DanceMJ2OursCfg(),
+    "k1_dance_pop1": K1DancePop1Cfg(),
+    "k1_dance_jazz1": K1DanceJazz1Cfg(),
+    "k1_dance_lock1": K1DanceLock1Cfg(),
+    "k1_dance_jazz1slow": K1DanceJazz1SlowCfg(),
+    "k1_dance_hiphop1": K1DanceHipHop1Cfg(),
+}
+# <name> uses the simulation gains (MuJoCo sim-to-sim); <name>_robot is the version to run on hardware.
+for _name, _cfg in TASKS.items():
+    register_task(_name, _cfg)
+    register_task(f"{_name}_robot", for_robot(_cfg))
