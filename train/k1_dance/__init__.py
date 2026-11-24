@@ -27,6 +27,10 @@ DANCES = {
     "Lock1N": "lock1n",
     "Pop1N": "pop1n",
     "HipHop1N": "hiphop1n",
+    # Easy clips picked by eval/rank_clips_for_sequencing.py, neutral-ended, trained from scratch.
+    "SJazz1N": "sjazz1n",
+    "Krump1N": "krump1n",
+    "Pop2N": "pop2n",
 }
 
 for _name in DANCES:

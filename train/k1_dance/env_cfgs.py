@@ -228,3 +228,69 @@ class HipHop1NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
 class HipHop1NPPOCfg(BasePPORunnerCfg):
     max_iterations = 2000
     experiment_name = "k1_dance_hiphop1"
+
+
+# ---- Easy clips picked for sequencing (eval/rank_clips_for_sequencing.py), neutral-ended -------
+# SJazz1N: Street Jazz gJS_sBM_cAll_d01_mJS0_ch01 (upper-body dance, easiest clip in the dataset)
+# Krump1N: Krump gKR_sBM_cAll_d29_mKR0_ch02 (little turning or tilt)
+# Pop2N:   Pop gPO_sBM_cAll_d10_mPO1_ch05 (starts close to neutral)
+# Trained from scratch on the neutral-ended clips (retarget/make_routine.py --hold-ends 0.5 <clip>).
+
+@configclass
+class SJazz1NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("SJazz1N")
+
+
+@configclass
+class SJazz1NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("SJazz1N")
+
+
+@configclass
+class SJazz1NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 5000
+    experiment_name = "k1_dance_sjazz1n"
+
+
+@configclass
+class Krump1NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Krump1N")
+
+
+@configclass
+class Krump1NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Krump1N")
+
+
+@configclass
+class Krump1NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 5000
+    experiment_name = "k1_dance_krump1n"
+
+
+@configclass
+class Pop2NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Pop2N")
+
+
+@configclass
+class Pop2NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Pop2N")
+
+
+@configclass
+class Pop2NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 5000
+    experiment_name = "k1_dance_pop2n"
