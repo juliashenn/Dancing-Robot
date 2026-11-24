@@ -1,0 +1,18 @@
+{
+  "task": "k1_dance_jazz1",
+  "start_stance": "walk",
+  "checkpoint": "..\\..\\..\\..\\deploy\\k1_dance_deploy\\models\\jazz1_it4999.pt",
+  "motion": "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\gJB_sBM_cAll_d08_mJB0_ch01.npz",
+  "motion_seconds": 11.98,
+  "ran_seconds": 11.98,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.111,
+  "max_root_xy_drift_m": 1.721,
+  "mean_heading_error_deg": 80.0,
+  "max_heading_error_deg": 180.0,
+  "robot_total_turn_deg": 409,
+  "reference_total_turn_deg": 4699,
+  "min_trunk_height_m": 0.526,
+  "wall_seconds": 3.5
+}

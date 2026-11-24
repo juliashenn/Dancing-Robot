@@ -1,0 +1,18 @@
+{
+  "task": "k1_dance_hiphop1",
+  "start_stance": "default",
+  "checkpoint": "..\\..\\..\\..\\deploy\\k1_dance_deploy\\models\\hiphop1_it9999.pt",
+  "motion": "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\gLH_sBM_cAll_d16_mLH0_ch01.npz",
+  "motion_seconds": 11.98,
+  "ran_seconds": 11.98,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.132,
+  "max_root_xy_drift_m": 0.631,
+  "mean_heading_error_deg": 5.0,
+  "max_heading_error_deg": 25.1,
+  "robot_total_turn_deg": 340,
+  "reference_total_turn_deg": 468,
+  "min_trunk_height_m": 0.524,
+  "wall_seconds": 2.3
+}

@@ -1,0 +1,13 @@
+task,start_stance,completed_motion,motion_seconds,mean_joint_error_rad,max_root_xy_drift_m,mean_heading_error_deg,max_heading_error_deg,min_trunk_height_m,worst_handoff_joint_error_rad
+k1_dance_mj2_ours,default,True,25.22,0.126,0.534,16.2,178.8,0.494,
+k1_dance_mj2_ours,walk,True,25.22,0.127,0.597,16.4,179.2,0.493,
+k1_dance_pop1,default,True,11.98,0.092,0.186,4.2,11.1,0.535,
+k1_dance_pop1,walk,True,11.98,0.091,0.18,3.9,9.4,0.538,
+k1_dance_jazz1,default,True,11.98,0.111,1.701,79.5,179.8,0.528,
+k1_dance_jazz1,walk,True,11.98,0.111,1.721,80.0,180.0,0.526,
+k1_dance_lock1,default,True,11.98,0.081,0.091,4.5,9.1,0.535,
+k1_dance_lock1,walk,True,11.98,0.08,0.081,4.8,9.8,0.537,
+k1_dance_jazz1slow,default,True,29.94,0.106,0.779,5.7,30.7,0.528,
+k1_dance_jazz1slow,walk,True,29.94,0.106,0.74,5.3,21.8,0.521,
+k1_dance_hiphop1,default,True,11.98,0.132,0.631,5.0,25.1,0.524,
+k1_dance_hiphop1,walk,True,11.98,0.133,0.667,5.4,30.3,0.521,
