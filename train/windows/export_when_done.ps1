@@ -35,9 +35,15 @@ foreach ($run in $Runs) {
     $watch = "C:\isaac\logs\train_$run.watchdog.log"
     while (-not ((Test-Path $watch) -and (Select-String -Path $watch -Pattern "worker done" -Quiet))) { Start-Sleep -Seconds 120 }
     $task = ((Select-String -Path $watch -Pattern "task=(\S+)" | Select-Object -First 1).Matches[0].Groups[1].Value)
-    $folder = Get-ChildItem C:\isaac\Dancing-Robot\logs\rsl_rl\*\ -Directory -Filter "*_$run" | Sort-Object CreationTime | Select-Object -Last 1
-    $best = Get-ChildItem $folder.FullName -Filter model_*.pt |
-        Sort-Object { [int]($_.BaseName -replace "model_", "") } | Select-Object -Last 1
+    # Run folders live one level down: logs\rsl_rl\<experiment>\<date>_<run>
+    $folder = Get-ChildItem C:\isaac\Dancing-Robot\logs\rsl_rl -Directory |
+        ForEach-Object { Get-ChildItem $_.FullName -Directory -Filter "*_$run" } |
+        Sort-Object CreationTime | Select-Object -Last 1
+    $best = if ($folder) {
+        Get-ChildItem $folder.FullName -Filter model_*.pt |
+            Sort-Object { [int]($_.BaseName -replace "model_", "") } | Select-Object -Last 1
+    }
+    if (-not $best) { Write-Log "$run finished but no run folder / checkpoint found, skipping"; continue }
     $iter = [int]($best.BaseName -replace "model_", "")
     $dir = "C:\isaac\export\${run}_$iter"
     New-Item -ItemType Directory -Force $dir | Out-Null
