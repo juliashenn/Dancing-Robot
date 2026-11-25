@@ -36,7 +36,7 @@ Checklist for the session with the robot (from booster_deploy's README plus our 
 
 1. **Copy our task into booster_deploy on the robot:** `deploy/k1_dance_deploy/` → `booster_deploy/tasks/k1_dance/` (models and motions are inside it). booster_deploy imports every package under `tasks/`, so nothing else needs registering. Check with `python scripts/deploy.py --list`: the `k1_dance_*` tasks should be listed.
 2. **Environment on the robot:** activate booster_deploy's `.venv` (needs torch, numpy, scipy, pyyaml; see its requirements.txt), then `source /opt/booster/BoosterRos2Interface/install/setup.bash`. Firmware must be ≥ v1.7.2.
-3. **Run a `_robot` task, never the plain one:** `python scripts/deploy.py --task k1_dance_lock1_robot`. Start with Lock (most accurate, least drift), then Pop; leave Hip-hop and slowed Jazz (more travel/turning) for later.
+3. **Run a `_robot` task, never the plain one:** `python scripts/deploy.py --task k1_dance_lock1_robot`. Start with Lock (most accurate, least drift), then Pop; leave Hip-hop and slowed Jazz (more travel/turning) for later. For routines, first run each dance alone with its `k1_dance_lib_<dance>_robot` task (Street Jazz drifts only ~2 cm, so it's the safest first neutral-ended dance), then the routine.
 4. **Start-up:** press `X` (remote) to enter Custom mode; the K1's default `prepare_mode="walking"` holds the robot standing with Booster's walking policy. Press `A` (or `r` on the keyboard) to start the dance. The dance then starts from the walking policy's stance (knees bent 0.3 rad), not our straight-legged neutral; `record_mujoco.py --start-stance walk` tests exactly that, and Lock, Pop and Hip-hop all complete from it with unchanged accuracy (0.080 / 0.091 / 0.133 rad). When the motion ends the controller exits to walking mode (default `exit_mode`), so the robot keeps balancing.
 5. **Safety:** someone on the gantry/harness, 1–2 m of clear floor (Lock drifts ~0.1 m in sim, Hip-hop ~0.6 m, slowed Jazz ~0.8 m). The policy's safety fallback stops it if the trunk orientation differs a lot from the reference.
 6. **Routines:** `k1_routine_<name>_robot` for each routine in `k1_dance_deploy/routines.yaml` (dances switch policies in the neutral stance). Edit that file to build a new routine; it appears once all its dances have trained models. Run its MuJoCo test first.
@@ -68,3 +68,23 @@ Pop training in Isaac Lab plateaued after ~5000 iterations (body error ~2.5–3 
 **Jazz1 lesson:** the clip is a sequence of traveling turns (~500 deg/s for 12 s, 4.5 m of travel). The policy survived but kept facing forward and didn't follow the spins (training: 7.6 cm body error, 2% failures at 5000 iterations vs Pop's 2.8 cm / 0.3%). Fast continuous spins (~1.4 turns/s on small flat feet) are physically hard and weren't learned in 5000 iterations, and traveling steps add drift because the policy doesn't observe its position in the room (it does observe its orientation). The feasibility filter now rejects clips turning faster than 300 deg/s (95th percentile) or traveling over 1 m; 35 of 41 Ballet Jazz clips fail it.
 
 **Slowing Jazz1 down fixed the spins:** the same clip resampled 2.5× slower (`csv_to_npz.py --input_fps 12`, ~270 deg/s turns) and trained for 10000 iterations follows the turns. Training orientation error fell from 1.40 rad to 0.35 rad and angular-velocity error from 6.0 to 1.5 rad/s; in MuJoCo it completes all 30 s with 0.34 m max drift instead of 1.70 m. Both changes mattered: at 5000 iterations the slowed clip's orientation error was ~0.9 rad (the original's was 1.38 and only creeping down), and the big drop to ~0.3 rad came between iterations 8000 and 8500. Continuing to 20000 iterations finished the job: training orientation error fell to 0.13 rad (flat after ~16000), and in MuJoCo the robot does every turn (mean heading error 5.7°). Max drift rose to 0.78 m, since the robot now actually travels through the turns while not observing its position. So "3000–5000 iterations per clip" holds for easy clips like Pop and Lock; clips with fast turns need slowing down and ~15000–20000.
+
+## Dance library and routines
+
+Each library dance is a clip that starts and ends in the neutral stance (`retarget/make_routine.py`), with its own policy. Lock, Pop and Hip-hop were fine-tuned from the policies above (+2000 iterations on the neutral-ended clip); Street Jazz, Krump and Pop 2 were picked by `eval/rank_clips_for_sequencing.py` and trained from scratch for 5000. Full table, from both start stances: [eval/results/mujoco_results.md](../eval/results/mujoco_results.md).
+
+| Task | Length | Completed | Mean joint error | Max drift | Worst handoff (first 1 s of a dance) |
+|---|---|---|---|---|---|
+| `k1_dance_lib_lock` | 13.0 s | yes | 0.101 rad | 0.10 m | |
+| `k1_dance_lib_pop` | 13.0 s | yes | 0.105 rad | 0.17 m | |
+| `k1_dance_lib_hiphop` | 13.0 s | yes | 0.136 rad | 0.64 m | |
+| `k1_dance_lib_sjazz` (Street Jazz, gJS_sBM_cAll_d01_mJS0_ch01) | 13.0 s | yes | 0.145 rad | **0.03 m** | |
+| `k1_dance_lib_krump` (gKR_sBM_cAll_d29_mKR0_ch02) | 13.0 s | yes | 0.140 rad | 0.09 m | |
+| `k1_dance_lib_pop2` (gPO_sBM_cAll_d10_mPO1_ch05) | 11.7 s | yes | 0.121 rad | 0.06 m | |
+| `k1_routine_lock_pop_hiphop` | 38.9 s | yes | 0.115 rad | 0.61 m | 0.143 rad |
+| `k1_routine_easy_three` (Street Jazz, Pop 2, Krump) | 37.6 s | yes | 0.123 rad | 0.07 m | 0.136 rad |
+| `k1_routine_everything` (all six) | 76.6 s | yes | 0.118 rad | 0.63 m | 0.185 rad |
+
+- **Switching policies in neutral works:** every routine completes, and each dance's error inside a routine matches its standalone run (e.g. Pop 0.107 vs 0.105 rad). The first second after a switch is somewhat worse (0.12–0.19 rad) while the new policy takes over, but there is no stumble. The handoff with a rough, untrained neutral (original Lock → original Pop) was 0.134 rad, so training on the neutral-ended clips mostly matters for starting and ending cleanly, not for the handoff itself.
+- **Neutral fine-tuning cost some accuracy on Lock** (0.101 vs 0.081 rad on the original clip; the clips differ by the 0.5 s neutral blends at each end, so this isn't a like-for-like comparison).
+- **Street Jazz and Krump were still improving at 5000 iterations** (training joint error 1.47 → 1.44 and 1.06 → 1.02 over the last quarter); they are being extended to 10000. Drift stays tiny for the easy three (≤ 9 cm), which makes `easy_three` the safest routine for the first hardware test.

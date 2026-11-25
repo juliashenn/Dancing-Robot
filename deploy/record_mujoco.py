@@ -29,7 +29,8 @@ p.add_argument("--task", default="k1_mj2", help="booster_deploy task to base the
 p.add_argument("--checkpoint", type=Path, help="Policy file (.pt TorchScript or .onnx) to use instead of the task's")
 p.add_argument("--motion", type=Path, help="Reference motion .npz to use instead of the task's")
 p.add_argument("--out", type=Path, help="Output path without extension (default videos/<task>_mujoco)")
-p.add_argument("--max-seconds", type=float, default=60.0, help="Stop after this long even if the motion continues")
+p.add_argument("--max-seconds", type=float, default=None,
+               help="Stop after this long even if the motion continues (default: motion length + 2 s)")
 p.add_argument("--width", type=int, default=960)
 p.add_argument("--height", type=int, default=720)
 p.add_argument("--no-ghost", action="store_true", help="Don't draw the reference robot")
@@ -141,7 +142,8 @@ def main():
 
     joint_err, root_xy_err, heights, frames = [], [], [], 0
     yaw, ref_yaw = [], []
-    max_steps = int(args.max_seconds * fps)
+    max_steps = (int(args.max_seconds * fps) if args.max_seconds
+                 else int(ctrl.policy.motion.time_step_total) + 2 * fps)
     writer = None if args.no_video else imageio.get_writer(
         f"{out}.mp4", fps=fps, codec="libx264", quality=8, macro_block_size=8)
     t0 = time.time()

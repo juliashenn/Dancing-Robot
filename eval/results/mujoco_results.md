@@ -12,3 +12,21 @@
 | `k1_dance_jazz1slow` | walk | yes | 29.94 | 0.106 | 0.74 | 5.3 |  |
 | `k1_dance_hiphop1` | default | yes | 11.98 | 0.132 | 0.631 | 5.0 |  |
 | `k1_dance_hiphop1` | walk | yes | 11.98 | 0.133 | 0.667 | 5.4 |  |
+| `k1_dance_lib_lock` | default | yes | 12.98 | 0.101 | 0.097 | 7.1 |  |
+| `k1_dance_lib_lock` | walk | yes | 12.98 | 0.103 | 0.084 | 7.4 |  |
+| `k1_dance_lib_pop` | default | yes | 12.98 | 0.105 | 0.17 | 4.4 |  |
+| `k1_dance_lib_pop` | walk | yes | 12.98 | 0.105 | 0.15 | 4.5 |  |
+| `k1_dance_lib_hiphop` | default | yes | 12.98 | 0.136 | 0.639 | 4.9 |  |
+| `k1_dance_lib_hiphop` | walk | yes | 12.98 | 0.136 | 0.688 | 4.9 |  |
+| `k1_dance_lib_sjazz` | default | yes | 12.98 | 0.145 | 0.025 | 3.9 |  |
+| `k1_dance_lib_sjazz` | walk | yes | 12.98 | 0.143 | 0.022 | 4.6 |  |
+| `k1_dance_lib_krump` | default | yes | 12.98 | 0.14 | 0.092 | 2.2 |  |
+| `k1_dance_lib_krump` | walk | yes | 12.98 | 0.113 | 0.09 | 2.4 |  |
+| `k1_dance_lib_pop2` | default | yes | 11.66 | 0.121 | 0.059 | 4.5 |  |
+| `k1_dance_lib_pop2` | walk | yes | 11.66 | 0.11 | 0.069 | 2.7 |  |
+| `k1_routine_lock_pop_hiphop` | default | yes | 38.94 | 0.115 | 0.613 | 5.5 | 0.143 |
+| `k1_routine_lock_pop_hiphop` | walk | yes | 38.94 | 0.116 | 0.644 | 5.5 | 0.142 |
+| `k1_routine_easy_three` | default | yes | 37.62 | 0.123 | 0.074 | 3.2 | 0.136 |
+| `k1_routine_easy_three` | walk | yes | 37.62 | 0.123 | 0.075 | 3.1 | 0.137 |
+| `k1_routine_everything` | default | yes | 76.56 | 0.118 | 0.626 | 4.7 | 0.185 |
+| `k1_routine_everything` | walk | yes | 76.56 | 0.118 | 0.591 | 4.8 | 0.186 |

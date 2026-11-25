@@ -4,7 +4,8 @@ Runs deploy/record_mujoco.py --no-video for each task (about 20 s per 12 s dance
 stance and from the K1 walking stance (what the real robot starts from), and collects the JSON summaries.
 
     python eval/evaluate_policies.py                     # all tasks whose model files exist
-    python eval/evaluate_policies.py k1_dance_lock1 k1_routine_lock_pop_hiphop
+    python eval/evaluate_policies.py k1_dance_lock1 k1_routine_lock_pop_hiphop   # re-run some, keep the rest
+    python eval/evaluate_policies.py --table-only
 
 Writes eval/results/mujoco_results.csv and eval/results/mujoco_results.md (and per-run JSON in
 eval/results/mujoco_runs/). Run with any Python; it calls booster_deploy's venv for the simulations.
@@ -55,7 +56,11 @@ def run(task, stance):
     out = RUNS / f"{task}_{stance}"
     subprocess.run([str(DEPLOY_PY), str(RECORD), "--task", task, "--no-video", "--start-stance", stance,
                     "--out", str(out)], capture_output=True, text=True, check=True)
-    d = json.loads(out.with_suffix(".json").read_text())
+    return load(out.with_suffix(".json"))
+
+
+def load(path):
+    d = json.loads(path.read_text())
     d["worst_handoff_joint_error_rad"] = max((p["handoff_joint_error_rad"] for p in d.get("per_dance", [])[1:]),
                                              default=None)
     return d
@@ -65,11 +70,12 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("tasks", nargs="*", help="task names (default: every k1_dance/k1_routine task with models)")
     p.add_argument("--stances", nargs="+", default=["default", "walk"], choices=["default", "walk"])
+    p.add_argument("--table-only", action="store_true", help="just rebuild the table from the saved runs")
     args = p.parse_args()
 
-    tasks = args.tasks or available_tasks()
+    current = available_tasks()
+    tasks = [] if args.table_only else (args.tasks or current)
     RUNS.mkdir(parents=True, exist_ok=True)
-    rows = []
     for task in tasks:
         for stance in args.stances:
             try:
@@ -77,11 +83,13 @@ def main():
             except subprocess.CalledProcessError as e:
                 print(f"{task} ({stance}): FAILED\n{e.stderr[-800:]}", file=sys.stderr)
                 continue
-            rows.append({k: d.get(k) for k in COLUMNS})
-            r = rows[-1]
-            print(f"{task:34} {stance:7} completed={r['completed_motion']!s:5} err={r['mean_joint_error_rad']} "
-                  f"drift={r['max_root_xy_drift_m']} heading={r['mean_heading_error_deg']}")
+            print(f"{task:34} {stance:7} completed={d['completed_motion']!s:5} err={d['mean_joint_error_rad']} "
+                  f"drift={d['max_root_xy_drift_m']} heading={d['mean_heading_error_deg']}")
 
+    # The table covers every current task with a saved run (so evaluating a few tasks doesn't drop the rest).
+    rows = [{k: d.get(k) for k in COLUMNS}
+            for task in current for stance in ("default", "walk")
+            if (f := RUNS / f"{task}_{stance}.json").exists() and (d := load(f))]
     out = REPO_ROOT / "eval" / "results" / "mujoco_results.csv"
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COLUMNS)

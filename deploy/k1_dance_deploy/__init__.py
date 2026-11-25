@@ -189,6 +189,9 @@ TASKS = {
     "k1_dance_lock1": K1DanceLock1Cfg(),
     "k1_dance_jazz1slow": K1DanceJazz1SlowCfg(),
     "k1_dance_hiphop1": K1DanceHipHop1Cfg(),
+    # Each library dance on its own (neutral in, neutral out): test these before the routines.
+    **{f"k1_dance_lib_{name}": sequence(dance) for name, dance in DANCE_LIBRARY.items()
+       if os.path.exists(os.path.join(_HERE, dance[0]))},
     **{f"k1_routine_{name}": sequence(*(DANCE_LIBRARY[d] for d in dances))
        for name, dances in load_routines().items()},
 }

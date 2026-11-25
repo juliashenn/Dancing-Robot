@@ -1,0 +1,35 @@
+{
+  "task": "k1_dance_lib_pop2",
+  "start_stance": "walk",
+  "checkpoint": "(sequence)",
+  "dance_start_times_s": [
+    0.0
+  ],
+  "motion": [
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\pop2n.npz"
+  ],
+  "motion_seconds": 11.66,
+  "ran_seconds": 11.66,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.11,
+  "max_root_xy_drift_m": 0.069,
+  "mean_heading_error_deg": 2.7,
+  "max_heading_error_deg": 11.1,
+  "robot_total_turn_deg": 34,
+  "reference_total_turn_deg": 49,
+  "min_trunk_height_m": 0.539,
+  "wall_seconds": 3.8,
+  "per_dance": [
+    {
+      "dance": "pop2n",
+      "start_s": 0.0,
+      "end_s": 11.66,
+      "mean_joint_error_rad": 0.11,
+      "max_root_xy_drift_m": 0.069,
+      "mean_heading_error_deg": 2.7,
+      "handoff_joint_error_rad": 0.134,
+      "handoff_max_heading_error_deg": 2.2
+    }
+  ]
+}
