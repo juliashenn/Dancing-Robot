@@ -29,6 +29,8 @@ p.add_argument("--task", default="k1_mj2", help="booster_deploy task to base the
 p.add_argument("--checkpoint", type=Path, help="Policy file (.pt TorchScript or .onnx) to use instead of the task's")
 p.add_argument("--motion", type=Path, help="Reference motion .npz to use instead of the task's")
 p.add_argument("--out", type=Path, help="Output path without extension (default videos/<task>_mujoco)")
+p.add_argument("--frames", action="store_true",
+               help="Also write <out>_frames.csv: per-frame joint error, drift, heading error, trunk height")
 p.add_argument("--max-seconds", type=float, default=None,
                help="Stop after this long even if the motion continues (default: motion length + 2 s)")
 p.add_argument("--width", type=int, default=960)
@@ -205,6 +207,11 @@ def main():
         summary["per_dance"] = per_dance_metrics(ctrl.policy.switch_frames, frames, fps, cfg.policy.dances,
                                                  np.array(joint_err), np.array(root_xy_err), heading_err)
     Path(f"{out}.json").write_text(json.dumps(summary, indent=2))
+    if args.frames and len(joint_err) == frames:
+        np.savetxt(f"{out}_frames.csv",
+                   np.column_stack([np.arange(frames) / fps, joint_err, root_xy_err, heading_err, heights]),
+                   delimiter=",", fmt="%.4f", comments="",
+                   header="t_s,joint_error_rad,root_xy_drift_m,heading_error_deg,trunk_height_m")
     print(json.dumps(summary, indent=2))
     if writer:
         print(f"video: {out}.mp4")
