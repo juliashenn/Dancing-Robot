@@ -4,8 +4,10 @@
 #   k1_routine_<name>         MuJoCo (simulation gains):  deploy/record_mujoco.py --task k1_routine_<name>
 #   k1_routine_<name>_robot   real robot:                 python scripts/deploy.py --task k1_routine_<name>_robot
 # A routine is only registered once every dance in it has a trained model in models/.
+# Order matters a little: some pairs hand off worse than others (e.g. pop2 -> krump). After adding or
+# retraining a dance, run eval/handoff_matrix.py: it measures every pair and prints the best order per routine.
 # Dances: lock, pop, hiphop, sjazz, krump, pop2
 
 lock_pop_hiphop: [lock, pop, hiphop]
-easy_three: [sjazz, pop2, krump]
-everything: [sjazz, lock, pop, krump, pop2, hiphop]
+easy_three: [pop2, sjazz, krump]   # order chosen by handoff error (eval/handoff_matrix.py)
+everything: [lock, pop, krump, sjazz, pop2, hiphop]   # order chosen by handoff error

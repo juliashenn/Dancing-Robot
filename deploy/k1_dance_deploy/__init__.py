@@ -142,8 +142,8 @@ DANCE_LIBRARY = {
     "lock": ("models/lock1n_it6999.pt", "motions/lock1n.npz"),        # fine-tuned from Lock1
     "pop": ("models/pop1n_it15000.pt", "motions/pop1n.npz"),          # fine-tuned from Pop1
     "hiphop": ("models/hiphop1n_it11999.pt", "motions/hiphop1n.npz"),  # fine-tuned from HipHop1
-    "sjazz": ("models/sjazz1n_it4999.pt", "motions/sjazz1n.npz"),     # Street Jazz, trained neutral-ended
-    "krump": ("models/krump1n_it4999.pt", "motions/krump1n.npz"),
+    "sjazz": ("models/sjazz1n_it6000.pt", "motions/sjazz1n.npz"),     # Street Jazz, trained neutral-ended
+    "krump": ("models/krump1n_it9000.pt", "motions/krump1n.npz"),
     "pop2": ("models/pop2n_it4999.pt", "motions/pop2n.npz"),
 }
 
@@ -195,6 +195,11 @@ TASKS = {
     **{f"k1_routine_{name}": sequence(*(DANCE_LIBRARY[d] for d in dances))
        for name, dances in load_routines().items()},
 }
+# Every ordered pair of library dances, for measuring handoffs (eval/handoff_matrix.py sets this variable).
+if os.environ.get("K1_DANCE_PAIR_TASKS"):
+    _ready = [n for n, d in DANCE_LIBRARY.items() if os.path.exists(os.path.join(_HERE, d[0]))]
+    TASKS.update({f"k1_pair_{a}_{b}": sequence(DANCE_LIBRARY[a], DANCE_LIBRARY[b])
+                  for a in _ready for b in _ready if a != b})
 # <name> uses the simulation gains (MuJoCo sim-to-sim); <name>_robot is the version to run on hardware.
 for _name, _cfg in TASKS.items():
     register_task(_name, _cfg)

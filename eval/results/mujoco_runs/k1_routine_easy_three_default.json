@@ -4,56 +4,56 @@
   "checkpoint": "(sequence)",
   "dance_start_times_s": [
     0.0,
-    12.98,
+    11.66,
     24.64
   ],
   "motion": [
-    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\sjazz1n.npz",
     "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\pop2n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\sjazz1n.npz",
     "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\krump1n.npz"
   ],
   "motion_seconds": 37.62,
   "ran_seconds": 37.62,
   "completed_motion": true,
   "safety_stop": false,
-  "mean_joint_error_rad": 0.123,
-  "max_root_xy_drift_m": 0.074,
-  "mean_heading_error_deg": 3.2,
-  "max_heading_error_deg": 11.8,
-  "robot_total_turn_deg": 107,
-  "reference_total_turn_deg": 171,
-  "min_trunk_height_m": 0.538,
-  "wall_seconds": 12.8,
+  "mean_joint_error_rad": 0.136,
+  "max_root_xy_drift_m": 0.093,
+  "mean_heading_error_deg": 5.0,
+  "max_heading_error_deg": 16.3,
+  "robot_total_turn_deg": 99,
+  "reference_total_turn_deg": 174,
+  "min_trunk_height_m": 0.537,
+  "wall_seconds": 3.3,
   "per_dance": [
     {
-      "dance": "sjazz1n",
+      "dance": "pop2n",
       "start_s": 0.0,
-      "end_s": 12.98,
-      "mean_joint_error_rad": 0.145,
-      "max_root_xy_drift_m": 0.025,
-      "mean_heading_error_deg": 3.9,
-      "handoff_joint_error_rad": 0.148,
-      "handoff_max_heading_error_deg": 3.6
+      "end_s": 11.66,
+      "mean_joint_error_rad": 0.121,
+      "max_root_xy_drift_m": 0.059,
+      "mean_heading_error_deg": 4.5,
+      "handoff_joint_error_rad": 0.142,
+      "handoff_max_heading_error_deg": 3.4
     },
     {
-      "dance": "pop2n",
-      "start_s": 12.98,
+      "dance": "sjazz1n",
+      "start_s": 11.66,
       "end_s": 24.64,
-      "mean_joint_error_rad": 0.108,
-      "max_root_xy_drift_m": 0.067,
-      "mean_heading_error_deg": 3.0,
-      "handoff_joint_error_rad": 0.136,
-      "handoff_max_heading_error_deg": 3.1
+      "mean_joint_error_rad": 0.157,
+      "max_root_xy_drift_m": 0.031,
+      "mean_heading_error_deg": 6.1,
+      "handoff_joint_error_rad": 0.149,
+      "handoff_max_heading_error_deg": 4.1
     },
     {
       "dance": "krump1n",
       "start_s": 24.64,
       "end_s": 37.62,
-      "mean_joint_error_rad": 0.114,
-      "max_root_xy_drift_m": 0.074,
-      "mean_heading_error_deg": 2.5,
-      "handoff_joint_error_rad": 0.117,
-      "handoff_max_heading_error_deg": 3.6
+      "mean_joint_error_rad": 0.128,
+      "max_root_xy_drift_m": 0.093,
+      "mean_heading_error_deg": 4.3,
+      "handoff_joint_error_rad": 0.201,
+      "handoff_max_heading_error_deg": 2.9
     }
   ]
 }
