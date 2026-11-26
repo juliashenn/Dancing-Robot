@@ -4,7 +4,7 @@ Runs deploy/record_mujoco.py --no-video for each task (about 20 s per 12 s dance
 stance and from the K1 walking stance (what the real robot starts from), and collects the JSON summaries.
 
     python eval/evaluate_policies.py                     # all tasks whose model files exist
-    python eval/evaluate_policies.py k1_dance_lock1 k1_routine_lock_pop_hiphop   # re-run some, keep the rest
+    python eval/evaluate_policies.py k1_dance_lock1 k1_routine_easy_three   # re-run some, keep the rest
     python eval/evaluate_policies.py --table-only
 
 Writes eval/results/mujoco_results.csv and eval/results/mujoco_results.md (and per-run JSON in

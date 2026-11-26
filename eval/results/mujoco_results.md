@@ -12,21 +12,21 @@
 | `k1_dance_jazz1slow` | walk | yes | 29.94 | 0.106 | 0.74 | 5.3 |  |
 | `k1_dance_hiphop1` | default | yes | 11.98 | 0.132 | 0.631 | 5.0 |  |
 | `k1_dance_hiphop1` | walk | yes | 11.98 | 0.133 | 0.667 | 5.4 |  |
-| `k1_dance_lib_lock` | default | yes | 12.98 | 0.101 | 0.097 | 7.1 |  |
-| `k1_dance_lib_lock` | walk | yes | 12.98 | 0.103 | 0.084 | 7.4 |  |
-| `k1_dance_lib_pop` | default | yes | 12.98 | 0.105 | 0.17 | 4.4 |  |
-| `k1_dance_lib_pop` | walk | yes | 12.98 | 0.105 | 0.15 | 4.5 |  |
-| `k1_dance_lib_hiphop` | default | yes | 12.98 | 0.136 | 0.639 | 4.9 |  |
-| `k1_dance_lib_hiphop` | walk | yes | 12.98 | 0.136 | 0.688 | 4.9 |  |
+| `k1_dance_lib_lock` | default | yes | 12.98 | 0.083 | 0.096 | 5.2 |  |
+| `k1_dance_lib_lock` | walk | yes | 12.98 | 0.083 | 0.114 | 4.8 |  |
+| `k1_dance_lib_pop` | default | yes | 12.98 | 0.095 | 0.215 | 3.9 |  |
+| `k1_dance_lib_pop` | walk | yes | 12.98 | 0.095 | 0.219 | 3.7 |  |
+| `k1_dance_lib_hiphop` | default | yes | 12.98 | 0.131 | 0.382 | 4.7 |  |
+| `k1_dance_lib_hiphop` | walk | yes | 12.98 | 0.132 | 0.445 | 4.7 |  |
 | `k1_dance_lib_sjazz` | default | yes | 12.98 | 0.146 | 0.024 | 2.7 |  |
 | `k1_dance_lib_sjazz` | walk | yes | 12.98 | 0.134 | 0.02 | 4.2 |  |
 | `k1_dance_lib_krump` | default | yes | 12.98 | 0.109 | 0.085 | 2.5 |  |
 | `k1_dance_lib_krump` | walk | yes | 12.98 | 0.101 | 0.087 | 2.1 |  |
 | `k1_dance_lib_pop2` | default | yes | 11.66 | 0.121 | 0.059 | 4.5 |  |
 | `k1_dance_lib_pop2` | walk | yes | 11.66 | 0.11 | 0.069 | 2.7 |  |
-| `k1_routine_lock_pop_hiphop` | default | yes | 38.94 | 0.115 | 0.613 | 5.5 | 0.143 |
-| `k1_routine_lock_pop_hiphop` | walk | yes | 38.94 | 0.116 | 0.644 | 5.5 | 0.142 |
+| `k1_routine_pop_lock_hiphop` | default | yes | 38.94 | 0.104 | 0.336 | 4.9 | 0.135 |
+| `k1_routine_pop_lock_hiphop` | walk | yes | 38.94 | 0.104 | 0.281 | 4.9 | 0.134 |
 | `k1_routine_easy_three` | default | yes | 37.62 | 0.136 | 0.093 | 5.0 | 0.201 |
 | `k1_routine_easy_three` | walk | yes | 37.62 | 0.115 | 0.087 | 3.9 | 0.132 |
-| `k1_routine_everything` | default | yes | 76.56 | 0.116 | 0.588 | 4.8 | 0.169 |
-| `k1_routine_everything` | walk | yes | 76.56 | 0.116 | 0.609 | 4.8 | 0.17 |
+| `k1_routine_everything` | default | yes | 76.56 | 0.12 | 0.304 | 4.9 | 0.201 |
+| `k1_routine_everything` | walk | yes | 76.56 | 0.109 | 0.326 | 4.4 | 0.132 |

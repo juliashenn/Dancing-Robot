@@ -71,37 +71,38 @@ Pop training in Isaac Lab plateaued after ~5000 iterations (body error ~2.5–3 
 
 ## Dance library and routines
 
-Each library dance is a clip that starts and ends in the neutral stance (`retarget/make_routine.py`), with its own policy. Lock, Pop and Hip-hop were fine-tuned from the policies above (+2000 iterations on the neutral-ended clip). Street Jazz, Krump and Pop 2 were picked by `eval/rank_clips_for_sequencing.py` and trained from scratch; their checkpoints were picked by MuJoCo result (see below). Full table, from both start stances: [eval/results/mujoco_results.md](../eval/results/mujoco_results.md). Numbers below are from the walk stance, which is what the real robot starts from.
+Each library dance is a clip that starts and ends in the neutral stance (`retarget/make_routine.py`), with its own policy. Street Jazz, Krump and Pop 2 were picked by `eval/rank_clips_for_sequencing.py` and trained on their neutral-ended clips. For Lock, Pop and Hip-hop we fine-tuned the original policies on the neutral-ended clip (+2000 iterations). That turned out to hurt Lock and Pop, so the library uses their original policies (see the checkpoint sweep below). Every model was picked by MuJoCo joint error. Full table, from both start stances: [eval/results/mujoco_results.md](../eval/results/mujoco_results.md). The numbers below are from the walk stance, which is what the real robot starts from.
 
 | Task | Model | Length | Completed | Mean joint error | Max drift | Worst handoff (first 1 s of a dance) |
 |---|---|---|---|---|---|---|
-| `k1_dance_lib_lock` | lock1n_it6999 | 13.0 s | yes | 0.103 rad | 0.08 m | |
-| `k1_dance_lib_pop` | pop1n_it15000 | 13.0 s | yes | 0.105 rad | 0.15 m | |
-| `k1_dance_lib_hiphop` | hiphop1n_it11999 | 13.0 s | yes | 0.136 rad | 0.69 m | |
+| `k1_dance_lib_lock` | lock1_it4999 (original) | 13.0 s | yes | **0.083 rad** | 0.11 m | |
+| `k1_dance_lib_pop` | pop1_it12750 (original) | 13.0 s | yes | 0.095 rad | 0.22 m | |
+| `k1_dance_lib_hiphop` | hiphop1n_it11500 | 13.0 s | yes | 0.132 rad | 0.45 m | |
 | `k1_dance_lib_sjazz` (Street Jazz, gJS_sBM_cAll_d01_mJS0_ch01) | sjazz1n_it6000 | 13.0 s | yes | 0.134 rad | **0.02 m** | |
 | `k1_dance_lib_krump` (gKR_sBM_cAll_d29_mKR0_ch02) | krump1n_it9000 | 13.0 s | yes | 0.101 rad | 0.09 m | |
 | `k1_dance_lib_pop2` (gPO_sBM_cAll_d10_mPO1_ch05) | pop2n_it4999 | 11.7 s | yes | 0.110 rad | 0.07 m | |
-| `k1_routine_lock_pop_hiphop` | | 38.9 s | yes | 0.116 rad | 0.64 m | 0.142 rad |
+| `k1_routine_pop_lock_hiphop` (Pop, Lock, Hip-hop) | | 38.9 s | yes | **0.104 rad** | 0.28 m | 0.134 rad |
 | `k1_routine_easy_three` (Pop 2, Street Jazz, Krump) | | 37.6 s | yes | 0.115 rad | 0.09 m | 0.132 rad |
-| `k1_routine_everything` (Lock, Pop, Krump, Street Jazz, Pop 2, Hip-hop) | | 76.6 s | yes | 0.116 rad | 0.61 m | 0.170 rad |
+| `k1_routine_everything` (Pop 2, Street Jazz, Krump, Pop, Lock, Hip-hop) | | 76.6 s | yes | 0.109 rad | 0.33 m | 0.134 rad |
 
-**Switching policies in neutral works.** Every routine completes from both start stances, and each dance's error inside a routine is close to its solo run (e.g. Pop 0.107 vs 0.105 rad). The first second after a switch is worse (0.09–0.21 rad) while the new policy takes over, but nothing falls. A rough test with untrained neutral ends (original Lock → original Pop) had a 0.134 rad handoff. So training on neutral-ended clips mostly buys a clean start and end, not a better handoff.
+**Switching policies in neutral works.** Every routine completes from both start stances, and each dance inside a routine tracks as well as it does alone (e.g. Lock 0.084 vs 0.083 rad). The first second after a switch is worse (0.09–0.15 rad here) while the new policy takes over, but nothing falls.
 
-**Order matters a bit.** `eval/handoff_matrix.py` runs every ordered pair of dances (30 two-dance runs, about 1 min each) and ranks the possible orders of each routine. Krump is the sensitive one to follow: it takes over cleanly after Street Jazz or Pop (0.09 / 0.11 rad) but not after Pop 2, Hip-hop or Lock (0.21 / 0.21 / 0.18). Reordering `easy_three` from Street Jazz → Pop 2 → Krump to Pop 2 → Street Jazz → Krump cut its worst handoff from 0.207 to 0.132 rad. Reordering `everything` cut its worst from 0.184 to 0.170. The matrix is a guide, not an exact prediction. How a dance ends carries into the next handoff: from the default stance, the new `easy_three` order's worst handoff is 0.201, because Pop 2 ends a little differently and that carries forward. Results for the matrix: [eval/results/handoff_matrix.csv](../eval/results/handoff_matrix.csv).
+**Picking checkpoints and orders improved the 6-dance routine a lot.** Compared with the first version (last checkpoint of every run, order picked by hand), mean error went from 0.118 to 0.109 rad, max drift from 0.63 to 0.33 m, and worst handoff from 0.185 to 0.134 rad.
 
-**Pick checkpoints by MuJoCo result, not by training length** ([eval/results/checkpoint_sweep.csv](../eval/results/checkpoint_sweep.csv)). Street Jazz and Krump were still improving in Isaac Lab at 5000 iterations, so both were extended to 10000 and intermediate checkpoints were exported. Joint error in MuJoCo, from the default / walk stance:
+**Order matters.** `eval/handoff_matrix.py` runs every ordered pair of dances (30 two-dance runs, about 1 min total) and ranks the possible orders of each routine. Some pairs hand off much worse than others: anything into Krump except from Street Jazz is 0.19–0.23 rad, while Street Jazz → Krump is 0.09. The matrix is a guide, not an exact prediction, because how one dance ends affects the next. For example, from the default stance Pop 2 ends a little differently and the Street Jazz → Krump handoff becomes 0.20. Results: [eval/results/handoff_matrix.csv](../eval/results/handoff_matrix.csv).
 
-| Iteration | Street Jazz | Krump |
-|---|---|---|
-| 4999 | 0.145 / 0.143 | 0.140 / 0.113 |
-| 6000 | **0.146 / 0.134** | 0.113 / 0.105 |
-| 7000 | 0.154 / 0.143 | 0.119 / 0.106 |
-| 8000 | 0.153 / 0.144 | 0.119 / 0.113 |
-| 9000 | 0.175 / 0.146 | **0.109 / 0.101** |
-| 9999 | 0.181 / 0.145 | 0.117 / 0.106 |
+**Pick checkpoints by MuJoCo result, not by training length** ([eval/results/checkpoint_sweep.csv](../eval/results/checkpoint_sweep.csv)). Joint error in MuJoCo on the neutral-ended clip, default / walk stance:
 
-Street Jazz got worse in MuJoCo with more training even though its Isaac Lab error kept falling. The likely reason is that the extra training fit Isaac Lab's physics more closely without carrying over to MuJoCo. Krump improved but zig-zags by about 0.01 rad between checkpoints. So export several checkpoints and keep the best one in MuJoCo.
+| Dance | Original policy (never saw neutral ends) | Neutral-trained checkpoints | Picked |
+|---|---|---|---|
+| Lock | **0.083 / 0.083** (4999) | 0.094–0.118 (5250–6999) | original |
+| Pop | **0.095 / 0.095** (12750) | 0.103–0.119 (13250–15000) | original |
+| Hip-hop | 0.135 / 0.134 (9999), drift 1.3–1.6 m | 0.130–0.138 (10250–11999); 11500: 0.131 / 0.132, drift 0.4 m | 11500 |
+| Street Jazz | | 4999: 0.145 / 0.143 → 6000: **0.146 / 0.134** → 9999: 0.181 / 0.145 | 6000 |
+| Krump | | 4999: 0.140 / 0.113 → 9000: **0.109 / 0.101** → 9999: 0.117 / 0.106 | 9000 |
 
-**Neutral fine-tuning cost some accuracy on Lock** (0.101 vs 0.081 rad on the original clip). The clips differ by the 0.5 s neutral blends at each end, so it isn't a like-for-like comparison.
+- **The original Lock and Pop policies already handle the 0.5 s neutral blends.** Fine-tuning them on the neutral-ended clip made them worse, and they take over from neutral as cleanly as the fine-tuned ones (0.11–0.14 rad handoffs). For Hip-hop the fine-tuning helped, mainly by cutting drift.
+- **More training can make a policy worse in MuJoCo.** Street Jazz's Isaac Lab error kept falling from 5000 to 10000 iterations, but in MuJoCo it got worse. The likely reason is that the extra training fit Isaac Lab's physics more closely without carrying over. Checkpoints also zig-zag by about 0.01–0.02 rad.
+- **Lesson:** export several checkpoints (every 500–1000 iterations) and keep the best one in MuJoCo, judged from the walk stance.
 
-**First hardware test:** `k1_routine_easy_three_robot`. It drifts the least (≤ 9 cm) and has the smoothest handoffs. Run each `k1_dance_lib_<dance>_robot` on its own before it.
+**First hardware test:** `k1_routine_easy_three_robot`. It drifts the least (≤ 9 cm) and has smooth handoffs. Before it, run each `k1_dance_lib_<dance>_robot` on its own. `k1_routine_pop_lock_hiphop_robot` is the most accurate routine (0.104 rad) but drifts about 0.3 m.

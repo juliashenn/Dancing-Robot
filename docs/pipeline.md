@@ -26,8 +26,10 @@ booster_deploy on the K1: <task>_robot tasks (motor-side ankle Kd), see deploy/R
 ## Chaining dances into a routine
 
 Every dance in the library (`deploy/k1_dance_deploy/__init__.py`, `DANCE_LIBRARY`) starts and ends in the
-same neutral stance (booster_train's default pose: legs straight, arms at the sides), and its policy is trained
-on that neutral-ended clip. A routine is a list of dances in `deploy/k1_dance_deploy/routines.yaml`.
+same neutral stance (booster_train's default pose: legs straight, arms at the sides). Most policies are trained
+on the neutral-ended clip; Lock and Pop keep their original policies, which already handle the 0.5 s neutral
+blends (fine-tuning made them worse in MuJoCo). A routine is a list of dances in `deploy/k1_dance_deploy/routines.yaml`.
+Each dance's checkpoint is picked by a MuJoCo sweep, and each routine's order by `eval/handoff_matrix.py`.
 
 At runtime the sequencer (`deploy/k1_dance_deploy/sequence.py`) runs one dance's policy at a time. When a
 dance's motion ends (robot standing in neutral), it resets the next dance's policy and hands over. The reset

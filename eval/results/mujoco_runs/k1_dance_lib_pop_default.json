@@ -12,24 +12,24 @@
   "ran_seconds": 12.98,
   "completed_motion": true,
   "safety_stop": false,
-  "mean_joint_error_rad": 0.105,
-  "max_root_xy_drift_m": 0.17,
-  "mean_heading_error_deg": 4.4,
-  "max_heading_error_deg": 12.7,
-  "robot_total_turn_deg": 309,
+  "mean_joint_error_rad": 0.095,
+  "max_root_xy_drift_m": 0.215,
+  "mean_heading_error_deg": 3.9,
+  "max_heading_error_deg": 10.4,
+  "robot_total_turn_deg": 366,
   "reference_total_turn_deg": 423,
-  "min_trunk_height_m": 0.531,
-  "wall_seconds": 3.0,
+  "min_trunk_height_m": 0.528,
+  "wall_seconds": 1.4,
   "per_dance": [
     {
       "dance": "pop1n",
       "start_s": 0.0,
       "end_s": 12.98,
-      "mean_joint_error_rad": 0.105,
-      "max_root_xy_drift_m": 0.17,
-      "mean_heading_error_deg": 4.4,
+      "mean_joint_error_rad": 0.095,
+      "max_root_xy_drift_m": 0.215,
+      "mean_heading_error_deg": 3.9,
       "handoff_joint_error_rad": 0.118,
-      "handoff_max_heading_error_deg": 4.4
+      "handoff_max_heading_error_deg": 7.9
     }
   ]
 }

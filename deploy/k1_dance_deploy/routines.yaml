@@ -8,6 +8,6 @@
 # retraining a dance, run eval/handoff_matrix.py: it measures every pair and prints the best order per routine.
 # Dances: lock, pop, hiphop, sjazz, krump, pop2
 
-lock_pop_hiphop: [lock, pop, hiphop]
+pop_lock_hiphop: [pop, lock, hiphop]   # order chosen by handoff error
 easy_three: [pop2, sjazz, krump]   # order chosen by handoff error (eval/handoff_matrix.py)
-everything: [lock, pop, krump, sjazz, pop2, hiphop]   # order chosen by handoff error
+everything: [pop2, sjazz, krump, pop, lock, hiphop]   # order chosen by handoff error

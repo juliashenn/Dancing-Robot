@@ -138,11 +138,14 @@ def sequence(*dances):
 SEQ_TEST = [("models/lock1_it4999.pt", "motions/gLO_sBM_cAll_d13_mLO0_ch01.npz"),
             ("models/pop1_it12750.pt", "motions/gPO_sBM_cAll_d10_mPO0_ch02.npz")]
 # Neutral-ended dances for switching (the *N tasks in train/k1_dance): name -> (model, motion).
+# Models were picked by MuJoCo joint error over a checkpoint sweep (deploy/README.md, eval/results/checkpoint_sweep.csv).
+# Motions are the neutral-ended clips. Lock and Pop use their original policies: fine-tuning them on the
+# neutral-ended clip made them worse in MuJoCo (Lock 0.083 -> 0.10+ rad), and they handle the neutral blends as is.
 DANCE_LIBRARY = {
-    "lock": ("models/lock1n_it6999.pt", "motions/lock1n.npz"),        # fine-tuned from Lock1
-    "pop": ("models/pop1n_it15000.pt", "motions/pop1n.npz"),          # fine-tuned from Pop1
-    "hiphop": ("models/hiphop1n_it11999.pt", "motions/hiphop1n.npz"),  # fine-tuned from HipHop1
-    "sjazz": ("models/sjazz1n_it6000.pt", "motions/sjazz1n.npz"),     # Street Jazz, trained neutral-ended
+    "lock": ("models/lock1_it4999.pt", "motions/lock1n.npz"),          # original Lock1 policy
+    "pop": ("models/pop1_it12750.pt", "motions/pop1n.npz"),            # original Pop1 policy
+    "hiphop": ("models/hiphop1n_it11500.pt", "motions/hiphop1n.npz"),  # fine-tuned from HipHop1 (drift 1.3 -> 0.4 m)
+    "sjazz": ("models/sjazz1n_it6000.pt", "motions/sjazz1n.npz"),      # Street Jazz, trained neutral-ended
     "krump": ("models/krump1n_it9000.pt", "motions/krump1n.npz"),
     "pop2": ("models/pop2n_it4999.pt", "motions/pop2n.npz"),
 }
