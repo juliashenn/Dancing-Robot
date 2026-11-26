@@ -1,7 +1,7 @@
 """Poster figure: tracking over a whole routine, with each dance and each policy handoff marked.
 
     third_party/booster_deploy/.venv/Scripts/python deploy/record_mujoco.py --task k1_routine_everything \
-        --no-video --frames --out eval/results/routine_everything
+        --no-video --frames --start-stance walk --out eval/results/routine_everything
     python eval/plot_routine.py eval/results/routine_everything      # -> routine_everything.png / .svg
 
 Reads <run>.json (dance start times and names) and <run>_frames.csv (per-frame metrics).
