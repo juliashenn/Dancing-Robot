@@ -294,3 +294,92 @@ class Pop2NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
 class Pop2NPPOCfg(BasePPORunnerCfg):
     max_iterations = 5000
     experiment_name = "k1_dance_pop2n"
+
+
+# ---- Second batch of easy clips (eval/rank_clips_for_sequencing.py), neutral-ended -----------------
+# Pop3N:   Pop gPO_sBM_cAll_d10_mPO1_ch04 (lowest difficulty score of all clips)
+# SJazz2N: Street Jazz gJS_sBM_cAll_d03_mJS3_ch02 (second Street Jazz choreography)
+# Lock2N:  Lock gLO_sBM_cAll_d13_mLO2_ch02 (second Lock choreography)
+# House1N: House gHO_sBM_cAll_d20_mHO5_ch04 (easiest House clip; harder than the others, ~Hip-hop level)
+# Built with retarget/make_routine.py --hold-ends 0.5 <clip>. Checkpoints are saved every 250 iterations so
+# the best one can be picked in MuJoCo (deploy/README.md, checkpoint sweep).
+
+
+@configclass
+class Pop3NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Pop3N")
+
+
+@configclass
+class Pop3NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Pop3N")
+
+
+@configclass
+class Pop3NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 5000
+    experiment_name = "k1_dance_pop3n"
+
+
+@configclass
+class SJazz2NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("SJazz2N")
+
+
+@configclass
+class SJazz2NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("SJazz2N")
+
+
+@configclass
+class SJazz2NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 5000
+    experiment_name = "k1_dance_sjazz2n"
+
+
+@configclass
+class Lock2NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Lock2N")
+
+
+@configclass
+class Lock2NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("Lock2N")
+
+
+@configclass
+class Lock2NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 5000
+    experiment_name = "k1_dance_lock2n"
+
+
+@configclass
+class House1NTrainCfg(RoughWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("House1N")
+
+
+@configclass
+class House1NPlayCfg(PlayFlatWoStateEstimationEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.commands.motion.motion_file = motion_file("House1N")
+
+
+@configclass
+class House1NPPOCfg(BasePPORunnerCfg):
+    max_iterations = 8000
+    experiment_name = "k1_dance_house1n"

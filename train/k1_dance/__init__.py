@@ -31,6 +31,11 @@ DANCES = {
     "SJazz1N": "sjazz1n",
     "Krump1N": "krump1n",
     "Pop2N": "pop2n",
+    # Second batch of easy clips, each a choreography we don't have yet (the "ch" in the clip name).
+    "Pop3N": "pop3n",
+    "SJazz2N": "sjazz2n",
+    "Lock2N": "lock2n",
+    "House1N": "house1n",
 }
 
 for _name in DANCES:
