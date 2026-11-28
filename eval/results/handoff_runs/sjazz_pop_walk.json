@@ -21,7 +21,7 @@
   "robot_total_turn_deg": 374,
   "reference_total_turn_deg": 450,
   "min_trunk_height_m": 0.527,
-  "wall_seconds": 2.3,
+  "wall_seconds": 13.2,
   "per_dance": [
     {
       "dance": "sjazz1n",

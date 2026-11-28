@@ -63,6 +63,52 @@ def measure(dances, stance):
     print(f"Saved {OUT}")
 
 
+def best_order(dances, h, score):
+    """Order with the smallest worst handoff, ties broken by the total. Exact for any routine length."""
+    if len(dances) <= 8:
+        return min(itertools.permutations(dances), key=score)
+    # Too many orders to list: for each threshold T (ascending, binary search over the pair scores), find the
+    # cheapest order that only uses handoffs <= T (Held-Karp over subsets); the first feasible T is optimal.
+    n = len(dances)
+    w = [[h[(a, b)] if a != b else 0.0 for b in dances] for a in dances]
+
+    def cheapest(t):
+        inf = float("inf")
+        cost = {(1 << i, i): (0.0, None) for i in range(n)}
+        for mask in range(1, 1 << n):
+            for last in range(n):
+                if (mask, last) not in cost:
+                    continue
+                c = cost[(mask, last)][0]
+                for nxt in range(n):
+                    if mask & (1 << nxt) or w[last][nxt] > t:
+                        continue
+                    key = (mask | (1 << nxt), nxt)
+                    if c + w[last][nxt] < cost.get(key, (inf, None))[0]:
+                        cost[key] = (c + w[last][nxt], last)
+        full = (1 << n) - 1
+        ends = [(cost[(full, i)][0], i) for i in range(n) if (full, i) in cost]
+        if not ends:
+            return None
+        order, mask, last = [], full, min(ends)[1]
+        while last is not None:
+            order.append(dances[last])
+            prev = cost[(mask, last)][1]
+            mask, last = mask & ~(1 << last), prev
+        return order[::-1]
+
+    thresholds = sorted({w[i][j] for i in range(n) for j in range(n) if i != j})
+    lo, hi, best = 0, len(thresholds) - 1, None
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        found = cheapest(thresholds[mid])
+        if found:
+            best, hi = found, mid - 1
+        else:
+            lo = mid + 1
+    return best
+
+
 def rank():
     with open(OUT) as f:
         h = {(r["from"], r["to"]): float(r["handoff_joint_error_rad"]) for r in csv.DictReader(f)}
@@ -71,7 +117,7 @@ def rank():
     for name, dances in routines.items():
         if len(dances) < 2 or not all((a, b) in h for a, b in itertools.permutations(set(dances), 2)):
             continue
-        best = min(itertools.permutations(dances), key=score)
+        best = best_order(dances, h, score)
         cur, bst = score(dances), score(best)
         print(f"{name}: current {dances} worst {cur[0]:.3f} / total {cur[1]:.3f}\n"
               f"{'':{len(name)}}  best    {list(best)} worst {bst[0]:.3f} / total {bst[1]:.3f}")

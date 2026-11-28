@@ -1,0 +1,47 @@
+{
+  "task": "k1_pair_sjazz2_house",
+  "start_stance": "walk",
+  "checkpoint": "(sequence)",
+  "dance_start_times_s": [
+    0.0,
+    9.72
+  ],
+  "motion": [
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\sjazz2n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\house1n.npz"
+  ],
+  "motion_seconds": 17.8,
+  "ran_seconds": 17.8,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.123,
+  "max_root_xy_drift_m": 0.142,
+  "mean_heading_error_deg": 3.3,
+  "max_heading_error_deg": 14.0,
+  "robot_total_turn_deg": 184,
+  "reference_total_turn_deg": 276,
+  "min_trunk_height_m": 0.509,
+  "wall_seconds": 8.7,
+  "per_dance": [
+    {
+      "dance": "sjazz2n",
+      "start_s": 0.0,
+      "end_s": 9.72,
+      "mean_joint_error_rad": 0.123,
+      "max_root_xy_drift_m": 0.142,
+      "mean_heading_error_deg": 3.9,
+      "handoff_joint_error_rad": 0.115,
+      "handoff_max_heading_error_deg": 1.6
+    },
+    {
+      "dance": "house1n",
+      "start_s": 9.72,
+      "end_s": 17.8,
+      "mean_joint_error_rad": 0.123,
+      "max_root_xy_drift_m": 0.132,
+      "mean_heading_error_deg": 2.7,
+      "handoff_joint_error_rad": 0.113,
+      "handoff_max_heading_error_deg": 9.0
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "task": "k1_dance_lib_house",
+  "start_stance": "default",
+  "checkpoint": "(sequence)",
+  "dance_start_times_s": [
+    0.0
+  ],
+  "motion": [
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\house1n.npz"
+  ],
+  "motion_seconds": 8.08,
+  "ran_seconds": 8.08,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.127,
+  "max_root_xy_drift_m": 0.149,
+  "mean_heading_error_deg": 2.8,
+  "max_heading_error_deg": 10.1,
+  "robot_total_turn_deg": 158,
+  "reference_total_turn_deg": 242,
+  "min_trunk_height_m": 0.504,
+  "wall_seconds": 0.7,
+  "per_dance": [
+    {
+      "dance": "house1n",
+      "start_s": 0.0,
+      "end_s": 8.08,
+      "mean_joint_error_rad": 0.127,
+      "max_root_xy_drift_m": 0.149,
+      "mean_heading_error_deg": 2.8,
+      "handoff_joint_error_rad": 0.144,
+      "handoff_max_heading_error_deg": 9.1
+    }
+  ]
+}

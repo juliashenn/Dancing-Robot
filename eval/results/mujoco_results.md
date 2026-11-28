@@ -24,9 +24,21 @@
 | `k1_dance_lib_krump` | walk | yes | 12.98 | 0.101 | 0.087 | 2.1 |  |
 | `k1_dance_lib_pop2` | default | yes | 11.66 | 0.121 | 0.059 | 4.5 |  |
 | `k1_dance_lib_pop2` | walk | yes | 11.66 | 0.11 | 0.069 | 2.7 |  |
+| `k1_dance_lib_pop3` | default | yes | 11.66 | 0.102 | 0.053 | 2.9 |  |
+| `k1_dance_lib_pop3` | walk | yes | 11.66 | 0.093 | 0.061 | 3.9 |  |
+| `k1_dance_lib_sjazz2` | default | yes | 9.72 | 0.126 | 0.149 | 3.3 |  |
+| `k1_dance_lib_sjazz2` | walk | yes | 9.72 | 0.123 | 0.142 | 3.9 |  |
+| `k1_dance_lib_lock2` | default | yes | 10.58 | 0.11 | 0.064 | 5.2 |  |
+| `k1_dance_lib_lock2` | walk | yes | 10.58 | 0.107 | 0.067 | 7.0 |  |
+| `k1_dance_lib_house` | default | yes | 8.08 | 0.127 | 0.149 | 2.8 |  |
+| `k1_dance_lib_house` | walk | yes | 8.08 | 0.123 | 0.126 | 2.8 |  |
 | `k1_routine_pop_lock_hiphop` | default | yes | 38.94 | 0.104 | 0.336 | 4.9 | 0.135 |
 | `k1_routine_pop_lock_hiphop` | walk | yes | 38.94 | 0.104 | 0.281 | 4.9 | 0.134 |
 | `k1_routine_easy_three` | default | yes | 37.62 | 0.136 | 0.093 | 5.0 | 0.201 |
 | `k1_routine_easy_three` | walk | yes | 37.62 | 0.115 | 0.087 | 3.9 | 0.132 |
 | `k1_routine_everything` | default | yes | 76.56 | 0.12 | 0.304 | 4.9 | 0.201 |
 | `k1_routine_everything` | walk | yes | 76.56 | 0.109 | 0.326 | 4.4 | 0.132 |
+| `k1_routine_new_four` | default | yes | 40.04 | 0.111 | 0.149 | 4.1 | 0.116 |
+| `k1_routine_new_four` | walk | yes | 40.04 | 0.11 | 0.142 | 4.2 | 0.116 |
+| `k1_routine_all_ten` | default | yes | 116.6 | 0.114 | 0.475 | 4.4 | 0.13 |
+| `k1_routine_all_ten` | walk | yes | 116.6 | 0.11 | 0.436 | 4.5 | 0.133 |

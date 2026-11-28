@@ -21,7 +21,7 @@
   "robot_total_turn_deg": 354,
   "reference_total_turn_deg": 518,
   "min_trunk_height_m": 0.517,
-  "wall_seconds": 2.1,
+  "wall_seconds": 12.5,
   "per_dance": [
     {
       "dance": "hiphop1n",

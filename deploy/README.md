@@ -81,15 +81,23 @@ Each library dance is a clip that starts and ends in the neutral stance (`retarg
 | `k1_dance_lib_sjazz` (Street Jazz, gJS_sBM_cAll_d01_mJS0_ch01) | sjazz1n_it6000 | 13.0 s | yes | 0.134 rad | **0.02 m** | |
 | `k1_dance_lib_krump` (gKR_sBM_cAll_d29_mKR0_ch02) | krump1n_it9000 | 13.0 s | yes | 0.101 rad | 0.09 m | |
 | `k1_dance_lib_pop2` (gPO_sBM_cAll_d10_mPO1_ch05) | pop2n_it4999 | 11.7 s | yes | 0.110 rad | 0.07 m | |
+| `k1_dance_lib_pop3` (gPO_sBM_cAll_d10_mPO1_ch04) | pop3n_it4000 | 11.7 s | yes | 0.093 rad | 0.06 m | |
+| `k1_dance_lib_sjazz2` (gJS_sBM_cAll_d03_mJS3_ch02) | sjazz2n_it3500 | 9.7 s | yes | 0.123 rad | 0.14 m | |
+| `k1_dance_lib_lock2` (gLO_sBM_cAll_d13_mLO2_ch02) | lock2n_it4500 | 10.6 s | yes | 0.107 rad | 0.07 m | |
+| `k1_dance_lib_house` (gHO_sBM_cAll_d20_mHO5_ch04) | house1n_it5000 | 8.1 s | yes | 0.123 rad | 0.13 m | |
 | `k1_routine_pop_lock_hiphop` (Pop, Lock, Hip-hop) | | 38.9 s | yes | **0.104 rad** | 0.28 m | 0.134 rad |
 | `k1_routine_easy_three` (Pop 2, Street Jazz, Krump) | | 37.6 s | yes | 0.115 rad | 0.09 m | 0.132 rad |
 | `k1_routine_everything` (Pop 2, Street Jazz, Krump, Pop, Lock, Hip-hop) | | 76.6 s | yes | 0.109 rad | 0.33 m | 0.134 rad |
+| `k1_routine_new_four` (Street Jazz 2, House, Pop 3, Lock 2) | | 40.0 s | yes | 0.110 rad | 0.14 m | 0.116 rad |
+| `k1_routine_all_ten` (Pop 2, Lock 2, Street Jazz, Krump, Hip-hop, House, Pop 3, Pop, Street Jazz 2, Lock) | | 116.6 s | yes | 0.110 rad | 0.44 m | 0.133 rad |
+
+The second batch (Pop 3, Street Jazz 2, Lock 2, House) is the next-easiest clips in the ranking, each with a choreography the library didn't have yet (the `ch` number in the clip name). Clips of the same choreography by another dancer look like repeats. Each trained in about 4 h; House got 8000 iterations, but its best checkpoint was at 5000. Figure for the 10-dance routine: [eval/results/routine_all_ten.png](../eval/results/routine_all_ten.png).
 
 **Switching policies in neutral works.** Every routine completes from both start stances, and each dance inside a routine tracks as well as it does alone (e.g. Lock 0.084 vs 0.083 rad). The first second after a switch is worse (0.09–0.15 rad here) while the new policy takes over, but nothing falls.
 
 **Picking checkpoints and orders improved the 6-dance routine a lot.** Compared with the first version (last checkpoint of every run, order picked by hand), mean error went from 0.118 to 0.109 rad, max drift from 0.63 to 0.33 m, and worst handoff from 0.185 to 0.134 rad.
 
-**Order matters.** `eval/handoff_matrix.py` runs every ordered pair of dances (30 two-dance runs, about 1 min total) and ranks the possible orders of each routine. Some pairs hand off much worse than others: anything into Krump except from Street Jazz is 0.19–0.23 rad, while Street Jazz → Krump is 0.09. The matrix is a guide, not an exact prediction, because how one dance ends affects the next. For example, from the default stance Pop 2 ends a little differently and the Street Jazz → Krump handoff becomes 0.20. Results: [eval/results/handoff_matrix.csv](../eval/results/handoff_matrix.csv).
+**Order matters.** `eval/handoff_matrix.py` runs every ordered pair of dances (90 two-dance runs for 10 dances, about 1 h) and finds the best order of each routine: the smallest worst handoff, ties broken by the total. It is exact for any length (a subset search above 8 dances, since a 10-dance routine has 3.6 million orders). Some pairs hand off much worse than others. Into Krump, most dances score 0.17–0.23 rad, but Street Jazz and Pop 3 score 0.09. The matrix is a guide, not an exact prediction, because how one dance ends affects the next. For example, from the default stance Pop 2 ends a little differently and the Street Jazz → Krump handoff becomes 0.20. Results: [eval/results/handoff_matrix.csv](../eval/results/handoff_matrix.csv).
 
 **Pick checkpoints by MuJoCo result, not by training length** ([eval/results/checkpoint_sweep.csv](../eval/results/checkpoint_sweep.csv)). Joint error in MuJoCo on the neutral-ended clip, default / walk stance:
 
@@ -100,6 +108,10 @@ Each library dance is a clip that starts and ends in the neutral stance (`retarg
 | Hip-hop | 0.135 / 0.134 (9999), drift 1.3–1.6 m | 0.130–0.138 (10250–11999); 11500: 0.131 / 0.132, drift 0.4 m | 11500 |
 | Street Jazz | | 4999: 0.145 / 0.143 → 6000: **0.146 / 0.134** → 9999: 0.181 / 0.145 | 6000 |
 | Krump | | 4999: 0.140 / 0.113 → 9000: **0.109 / 0.101** → 9999: 0.117 / 0.106 | 9000 |
+| Pop 3 | | 2500: 0.133 / 0.117 → 4000: **0.102 / 0.093** → 4999: 0.106 / 0.101 | 4000 |
+| Street Jazz 2 | | 2500: 0.145 / 0.134 → 3500: **0.126 / 0.123** → 4999: 0.129 / 0.125 | 3500 |
+| Lock 2 | | 2500: 0.135 / 0.123 → 4500: **0.110 / 0.107** → 4999: 0.118 / 0.111 | 4500 |
+| House | | 4000: 0.137 / 0.134 → 5000: **0.127 / 0.123** → 7999: 0.128 / 0.127 | 5000 |
 
 - **The original Lock and Pop policies already handle the 0.5 s neutral blends.** Fine-tuning them on the neutral-ended clip made them worse, and they take over from neutral as cleanly as the fine-tuned ones (0.11–0.14 rad handoffs). For Hip-hop the fine-tuning helped, mainly by cutting drift.
 - **More training can make a policy worse in MuJoCo.** Street Jazz's Isaac Lab error kept falling from 5000 to 10000 iterations, but in MuJoCo it got worse. The likely reason is that the extra training fit Isaac Lab's physics more closely without carrying over. Checkpoints also zig-zag by about 0.01–0.02 rad.

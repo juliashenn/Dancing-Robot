@@ -1,0 +1,143 @@
+{
+  "task": "k1_routine_all_ten",
+  "start_stance": "default",
+  "checkpoint": "(sequence)",
+  "dance_start_times_s": [
+    0.0,
+    11.66,
+    22.24,
+    35.22,
+    48.2,
+    61.18,
+    69.26,
+    80.92,
+    93.9,
+    103.62
+  ],
+  "motion": [
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\pop2n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\lock2n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\sjazz1n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\krump1n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\hiphop1n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\house1n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\pop3n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\pop1n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\sjazz2n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\lock1n.npz"
+  ],
+  "motion_seconds": 116.6,
+  "ran_seconds": 116.6,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.114,
+  "max_root_xy_drift_m": 0.475,
+  "mean_heading_error_deg": 4.4,
+  "max_heading_error_deg": 17.1,
+  "robot_total_turn_deg": 1320,
+  "reference_total_turn_deg": 1775,
+  "min_trunk_height_m": 0.507,
+  "wall_seconds": 47.5,
+  "per_dance": [
+    {
+      "dance": "pop2n",
+      "start_s": 0.0,
+      "end_s": 11.66,
+      "mean_joint_error_rad": 0.121,
+      "max_root_xy_drift_m": 0.059,
+      "mean_heading_error_deg": 4.5,
+      "handoff_joint_error_rad": 0.142,
+      "handoff_max_heading_error_deg": 3.4
+    },
+    {
+      "dance": "lock2n",
+      "start_s": 11.66,
+      "end_s": 22.24,
+      "mean_joint_error_rad": 0.119,
+      "max_root_xy_drift_m": 0.065,
+      "mean_heading_error_deg": 5.0,
+      "handoff_joint_error_rad": 0.123,
+      "handoff_max_heading_error_deg": 7.7
+    },
+    {
+      "dance": "sjazz1n",
+      "start_s": 22.24,
+      "end_s": 35.22,
+      "mean_joint_error_rad": 0.146,
+      "max_root_xy_drift_m": 0.022,
+      "mean_heading_error_deg": 5.7,
+      "handoff_joint_error_rad": 0.13,
+      "handoff_max_heading_error_deg": 5.4
+    },
+    {
+      "dance": "krump1n",
+      "start_s": 35.22,
+      "end_s": 48.2,
+      "mean_joint_error_rad": 0.103,
+      "max_root_xy_drift_m": 0.093,
+      "mean_heading_error_deg": 2.8,
+      "handoff_joint_error_rad": 0.097,
+      "handoff_max_heading_error_deg": 2.3
+    },
+    {
+      "dance": "hiphop1n",
+      "start_s": 48.2,
+      "end_s": 61.18,
+      "mean_joint_error_rad": 0.131,
+      "max_root_xy_drift_m": 0.475,
+      "mean_heading_error_deg": 4.7,
+      "handoff_joint_error_rad": 0.127,
+      "handoff_max_heading_error_deg": 1.7
+    },
+    {
+      "dance": "house1n",
+      "start_s": 61.18,
+      "end_s": 69.26,
+      "mean_joint_error_rad": 0.118,
+      "max_root_xy_drift_m": 0.126,
+      "mean_heading_error_deg": 2.9,
+      "handoff_joint_error_rad": 0.087,
+      "handoff_max_heading_error_deg": 10.2
+    },
+    {
+      "dance": "pop3n",
+      "start_s": 69.26,
+      "end_s": 80.92,
+      "mean_joint_error_rad": 0.089,
+      "max_root_xy_drift_m": 0.093,
+      "mean_heading_error_deg": 4.1,
+      "handoff_joint_error_rad": 0.099,
+      "handoff_max_heading_error_deg": 3.1
+    },
+    {
+      "dance": "pop1n",
+      "start_s": 80.92,
+      "end_s": 93.9,
+      "mean_joint_error_rad": 0.097,
+      "max_root_xy_drift_m": 0.265,
+      "mean_heading_error_deg": 3.9,
+      "handoff_joint_error_rad": 0.123,
+      "handoff_max_heading_error_deg": 8.2
+    },
+    {
+      "dance": "sjazz2n",
+      "start_s": 93.9,
+      "end_s": 103.62,
+      "mean_joint_error_rad": 0.135,
+      "max_root_xy_drift_m": 0.133,
+      "mean_heading_error_deg": 4.6,
+      "handoff_joint_error_rad": 0.125,
+      "handoff_max_heading_error_deg": 6.5
+    },
+    {
+      "dance": "lock1n",
+      "start_s": 103.62,
+      "end_s": 116.6,
+      "mean_joint_error_rad": 0.086,
+      "max_root_xy_drift_m": 0.116,
+      "mean_heading_error_deg": 5.6,
+      "handoff_joint_error_rad": 0.119,
+      "handoff_max_heading_error_deg": 5.9
+    }
+  ]
+}

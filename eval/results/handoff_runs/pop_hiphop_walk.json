@@ -21,7 +21,7 @@
   "robot_total_turn_deg": 682,
   "reference_total_turn_deg": 897,
   "min_trunk_height_m": 0.52,
-  "wall_seconds": 2.2,
+  "wall_seconds": 13.9,
   "per_dance": [
     {
       "dance": "pop1n",

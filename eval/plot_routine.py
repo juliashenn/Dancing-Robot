@@ -19,7 +19,8 @@ SURFACE, INK, INK_2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 BAND = "#efeeea"
 SERIES = "#2a78d6"
 NAMES = {"lock1n": "Lock", "pop1n": "Pop", "hiphop1n": "Hip-hop", "sjazz1n": "Street Jazz",
-         "krump1n": "Krump", "pop2n": "Pop 2"}
+         "krump1n": "Krump", "pop2n": "Pop 2", "pop3n": "Pop 3", "sjazz2n": "Street Jazz 2",
+         "lock2n": "Lock 2", "house1n": "House"}
 
 PANELS = [  # one measure per panel (no shared y-axis between different units)
     ("joint_error_rad", "Joint error (rad)"),
@@ -45,7 +46,7 @@ def main():
 
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 11, "axes.edgecolor": GRID,
                          "axes.labelcolor": INK_2, "xtick.color": INK_2, "ytick.color": INK_2})
-    fig, axes = plt.subplots(len(PANELS), 1, figsize=(12, 6.8), sharex=True, facecolor=SURFACE,
+    fig, axes = plt.subplots(len(PANELS), 1, figsize=(max(12, 1.9 * len(names)), 6.8), sharex=True, facecolor=SURFACE,
                              gridspec_kw={"hspace": 0.18})
     for ax, (key, label) in zip(axes, PANELS):
         y = np.array([float(r[key]) for r in rows])

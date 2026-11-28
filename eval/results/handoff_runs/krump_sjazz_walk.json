@@ -21,7 +21,7 @@
   "robot_total_turn_deg": 64,
   "reference_total_turn_deg": 112,
   "min_trunk_height_m": 0.543,
-  "wall_seconds": 2.3,
+  "wall_seconds": 14.5,
   "per_dance": [
     {
       "dance": "krump1n",

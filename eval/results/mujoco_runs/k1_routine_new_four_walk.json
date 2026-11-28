@@ -1,0 +1,71 @@
+{
+  "task": "k1_routine_new_four",
+  "start_stance": "walk",
+  "checkpoint": "(sequence)",
+  "dance_start_times_s": [
+    0.0,
+    9.72,
+    17.8,
+    29.46
+  ],
+  "motion": [
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\sjazz2n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\house1n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\pop3n.npz",
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\lock2n.npz"
+  ],
+  "motion_seconds": 40.04,
+  "ran_seconds": 40.04,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.11,
+  "max_root_xy_drift_m": 0.142,
+  "mean_heading_error_deg": 4.2,
+  "max_heading_error_deg": 14.0,
+  "robot_total_turn_deg": 304,
+  "reference_total_turn_deg": 474,
+  "min_trunk_height_m": 0.509,
+  "wall_seconds": 4.9,
+  "per_dance": [
+    {
+      "dance": "sjazz2n",
+      "start_s": 0.0,
+      "end_s": 9.72,
+      "mean_joint_error_rad": 0.123,
+      "max_root_xy_drift_m": 0.142,
+      "mean_heading_error_deg": 3.9,
+      "handoff_joint_error_rad": 0.115,
+      "handoff_max_heading_error_deg": 1.6
+    },
+    {
+      "dance": "house1n",
+      "start_s": 9.72,
+      "end_s": 17.8,
+      "mean_joint_error_rad": 0.123,
+      "max_root_xy_drift_m": 0.132,
+      "mean_heading_error_deg": 2.7,
+      "handoff_joint_error_rad": 0.113,
+      "handoff_max_heading_error_deg": 9.0
+    },
+    {
+      "dance": "pop3n",
+      "start_s": 17.8,
+      "end_s": 29.46,
+      "mean_joint_error_rad": 0.089,
+      "max_root_xy_drift_m": 0.09,
+      "mean_heading_error_deg": 4.3,
+      "handoff_joint_error_rad": 0.102,
+      "handoff_max_heading_error_deg": 3.0
+    },
+    {
+      "dance": "lock2n",
+      "start_s": 29.46,
+      "end_s": 40.04,
+      "mean_joint_error_rad": 0.112,
+      "max_root_xy_drift_m": 0.072,
+      "mean_heading_error_deg": 5.6,
+      "handoff_joint_error_rad": 0.116,
+      "handoff_max_heading_error_deg": 6.4
+    }
+  ]
+}

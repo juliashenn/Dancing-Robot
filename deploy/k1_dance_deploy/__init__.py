@@ -148,6 +148,10 @@ DANCE_LIBRARY = {
     "sjazz": ("models/sjazz1n_it6000.pt", "motions/sjazz1n.npz"),      # Street Jazz, trained neutral-ended
     "krump": ("models/krump1n_it9000.pt", "motions/krump1n.npz"),
     "pop2": ("models/pop2n_it4999.pt", "motions/pop2n.npz"),
+    "pop3": ("models/pop3n_it4000.pt", "motions/pop3n.npz"),          # gPO_sBM_cAll_d10_mPO1_ch04
+    "sjazz2": ("models/sjazz2n_it3500.pt", "motions/sjazz2n.npz"),    # gJS_sBM_cAll_d03_mJS3_ch02
+    "lock2": ("models/lock2n_it4500.pt", "motions/lock2n.npz"),       # gLO_sBM_cAll_d13_mLO2_ch02
+    "house": ("models/house1n_it5000.pt", "motions/house1n.npz"),     # gHO_sBM_cAll_d20_mHO5_ch04
 }
 
 

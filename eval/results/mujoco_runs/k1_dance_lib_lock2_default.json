@@ -1,0 +1,35 @@
+{
+  "task": "k1_dance_lib_lock2",
+  "start_stance": "default",
+  "checkpoint": "(sequence)",
+  "dance_start_times_s": [
+    0.0
+  ],
+  "motion": [
+    "..\\..\\..\\..\\deploy\\k1_dance_deploy\\motions\\lock2n.npz"
+  ],
+  "motion_seconds": 10.58,
+  "ran_seconds": 10.58,
+  "completed_motion": true,
+  "safety_stop": false,
+  "mean_joint_error_rad": 0.11,
+  "max_root_xy_drift_m": 0.064,
+  "mean_heading_error_deg": 5.2,
+  "max_heading_error_deg": 10.0,
+  "robot_total_turn_deg": 96,
+  "reference_total_turn_deg": 156,
+  "min_trunk_height_m": 0.535,
+  "wall_seconds": 0.9,
+  "per_dance": [
+    {
+      "dance": "lock2n",
+      "start_s": 0.0,
+      "end_s": 10.58,
+      "mean_joint_error_rad": 0.11,
+      "max_root_xy_drift_m": 0.064,
+      "mean_heading_error_deg": 5.2,
+      "handoff_joint_error_rad": 0.116,
+      "handoff_max_heading_error_deg": 6.4
+    }
+  ]
+}

@@ -6,8 +6,10 @@
 # A routine is only registered once every dance in it has a trained model in models/.
 # Order matters a little: some pairs hand off worse than others (e.g. pop2 -> krump). After adding or
 # retraining a dance, run eval/handoff_matrix.py: it measures every pair and prints the best order per routine.
-# Dances: lock, pop, hiphop, sjazz, krump, pop2
+# Dances: lock, pop, hiphop, sjazz, krump, pop2, pop3, sjazz2, lock2, house
 
 pop_lock_hiphop: [pop, lock, hiphop]   # order chosen by handoff error
 easy_three: [pop2, sjazz, krump]   # order chosen by handoff error (eval/handoff_matrix.py)
 everything: [pop2, sjazz, krump, pop, lock, hiphop]   # order chosen by handoff error
+new_four: [sjazz2, house, pop3, lock2]   # order chosen by handoff error
+all_ten: [pop2, lock2, sjazz, krump, hiphop, house, pop3, pop, sjazz2, lock]   # order chosen by handoff error
